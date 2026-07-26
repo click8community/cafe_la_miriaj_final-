@@ -582,21 +582,34 @@ try {
   await laptopPage.goto(`${baseUrl}/#home`, { waitUntil: "networkidle" });
   const wideDesktopDimensions = await laptopPage.evaluate(() => {
     const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
+    const hero = document.querySelector(".hero-mood")?.getBoundingClientRect();
+    const exploreButton = document.querySelector(".hero-explore-cafe-button")?.getBoundingClientRect();
     return {
       viewportWidth: window.innerWidth,
+      viewportHeight: window.innerHeight,
       documentWidth: document.documentElement.scrollWidth,
       shellWidth: shell?.width ?? 0,
-      sideMargin: shell ? (window.innerWidth - shell.width) / 2 : Infinity,
+      heroLeft: hero?.left ?? Infinity,
+      heroRight: hero?.right ?? -Infinity,
+      heroWidth: hero?.width ?? 0,
+      exploreButtonBottom: exploreButton?.bottom ?? Infinity,
     };
   });
   check(
     "Wide desktop hero fills the viewport",
-    Math.abs(wideDesktopDimensions.shellWidth - wideDesktopDimensions.viewportWidth) < 1,
+    Math.abs(wideDesktopDimensions.heroWidth - wideDesktopDimensions.viewportWidth) < 1 &&
+      Math.abs(wideDesktopDimensions.heroLeft) < 1 &&
+      Math.abs(wideDesktopDimensions.heroRight - wideDesktopDimensions.viewportWidth) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
-    "Wide desktop hero has no empty side margins",
-    wideDesktopDimensions.sideMargin < 1,
+    "Wide desktop keeps the Figma content fitted",
+    wideDesktopDimensions.shellWidth <= wideDesktopDimensions.viewportWidth * 0.82,
+    JSON.stringify(wideDesktopDimensions),
+  );
+  check(
+    "Wide desktop keeps the Explore button visible",
+    wideDesktopDimensions.exploreButtonBottom <= wideDesktopDimensions.viewportHeight,
     JSON.stringify(wideDesktopDimensions),
   );
   check(

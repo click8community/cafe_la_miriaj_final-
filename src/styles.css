@@ -29,6 +29,7 @@ button {
 .site-frame {
   width: 100%;
   min-height: 100vh;
+  overflow-x: clip;
   background: #002c34;
 }
 
@@ -46,10 +47,8 @@ button {
   }
 }
 
-@media (min-width: 900px) and (min-aspect-ratio: 19 / 10) and (max-height: 1100px) {
-  .page-shell {
-    width: 100%;
-  }
+.site-frame-home .page-shell {
+  overflow-x: visible;
 }
 
 .page-image-clip {
@@ -1021,13 +1020,43 @@ button {
   position: absolute;
   z-index: 3;
   overflow: hidden;
-  transform-origin: top left;
   pointer-events: none;
+}
+
+.hero-mood-canvas {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: 2;
+  transform-origin: top center;
+  pointer-events: none;
+}
+
+.hero-mood-side-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 0;
+  width: max(0px, calc((100% - var(--hero-canvas-width)) / 2 + 1px));
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.hero-mood-side-fill.is-left {
+  left: 0;
+  background-image: url("/figma-exports/hero-night-edge-left.png?v=1");
+}
+
+.hero-mood-side-fill.is-right {
+  right: 0;
+  background-image: url("/figma-exports/hero-night-edge-right.png?v=1");
 }
 
 .hero-mood-photo {
   position: absolute;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1039,6 +1068,7 @@ button {
 .hero-mood-shade {
   position: absolute;
   inset: 0;
+  z-index: 1;
   background:
     linear-gradient(90deg, rgba(0, 22, 28, 0.86) 0%, rgba(0, 38, 48, 0.7) 35%, rgba(0, 30, 38, 0.18) 68%, rgba(0, 0, 0, 0.08) 100%),
     linear-gradient(180deg, rgba(0, 0, 0, 0.08) 0%, rgba(0, 44, 52, 0.45) 100%);

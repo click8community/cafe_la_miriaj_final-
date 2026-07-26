@@ -1695,13 +1695,20 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
       className="hero-mood"
       aria-label="Cafe day, sunset and night views"
       style={{
-        left: 0,
+        "--hero-canvas-width": `${heroMoodSwitcher.width * scale}px`,
+        left: "50%",
         top: heroMoodSwitcher.top * scale,
-        width: heroMoodSwitcher.width,
-        height: heroMoodSwitcher.height,
-        transform: `scale(${scale})`,
-      }}
+        width: "100vw",
+        height: heroMoodSwitcher.height * scale,
+        transform: "translateX(-50%)",
+      } as CSSProperties}
     >
+      {!showMoodPhoto && (
+        <>
+          <span className="hero-mood-side-fill is-left" aria-hidden="true" />
+          <span className="hero-mood-side-fill is-right" aria-hidden="true" />
+        </>
+      )}
       {showMoodPhoto && (
         <>
           <img
@@ -1712,6 +1719,17 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
             draggable={false}
           />
           <div className="hero-mood-shade" aria-hidden="true" />
+        </>
+      )}
+      <div
+        className="hero-mood-canvas"
+        style={{
+          width: heroMoodSwitcher.width,
+          height: heroMoodSwitcher.height,
+          transform: `translateX(-50%) scale(${scale})`,
+        }}
+      >
+        {showMoodPhoto && (
           <div className="hero-mood-copy">
             <p className="hero-mood-eyebrow">Chennai's Tallest Rooftop Cafe</p>
             <h1 className="hero-mood-title">
@@ -1740,23 +1758,23 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
               </span>
             </div>
           </div>
-        </>
-      )}
-      <div className="hero-mood-toggle" aria-label="Change cafe view">
-        {heroMoods.map((item) => (
-          <button
-            key={item.key}
-            className={`hero-mood-button hero-mood-button-${item.key}${
-              activeMood === item.key ? " is-active" : ""
-            }`}
-            type="button"
-            aria-label={`Show cafe in ${item.label.toLowerCase()}`}
-            aria-pressed={activeMood === item.key}
-            onClick={() => setActiveMood(item.key)}
-          >
-            <img className="hero-mood-icon" src={item.icon} alt="" aria-hidden="true" draggable={false} />
-          </button>
-        ))}
+        )}
+        <div className="hero-mood-toggle" aria-label="Change cafe view">
+          {heroMoods.map((item) => (
+            <button
+              key={item.key}
+              className={`hero-mood-button hero-mood-button-${item.key}${
+                activeMood === item.key ? " is-active" : ""
+              }`}
+              type="button"
+              aria-label={`Show cafe in ${item.label.toLowerCase()}`}
+              aria-pressed={activeMood === item.key}
+              onClick={() => setActiveMood(item.key)}
+            >
+              <img className="hero-mood-icon" src={item.icon} alt="" aria-hidden="true" draggable={false} />
+            </button>
+          ))}
+        </div>
       </div>
     </section>
   );
