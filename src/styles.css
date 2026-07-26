@@ -2240,6 +2240,22 @@ button {
   gap: 22px;
 }
 
+.booking-actions.is-panel {
+  position: static;
+  width: 100%;
+  margin-top: 34px;
+}
+
+.booking-actions.is-panel .booking-back {
+  min-width: 176px;
+}
+
+.booking-actions.is-panel .booking-primary {
+  min-width: 0;
+  flex: 1;
+  padding: 0 28px;
+}
+
 .booking-primary,
 .booking-back {
   height: 98px;

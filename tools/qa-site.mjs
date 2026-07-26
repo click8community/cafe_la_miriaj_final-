@@ -369,6 +369,21 @@ try {
       "Booking advances to date and time",
       (await page.getByRole("heading", { name: "Select Date & Time", exact: true }).count()) === 1,
     );
+    const actionsInsidePanel = await page.locator(".booking-form-panel").evaluate((panel) => {
+      const panelRect = panel.getBoundingClientRect();
+      const buttons = [...panel.querySelectorAll(".booking-actions button")];
+
+      return buttons.length === 2 && buttons.every((button) => {
+        const buttonRect = button.getBoundingClientRect();
+        return (
+          buttonRect.left >= panelRect.left &&
+          buttonRect.right <= panelRect.right &&
+          buttonRect.top >= panelRect.top &&
+          buttonRect.bottom <= panelRect.bottom
+        );
+      });
+    });
+    check("Date and time controls stay inside the booking panel", actionsInsidePanel);
   }
 
   const dateSelect = page.locator(".booking-select-field select").nth(0);

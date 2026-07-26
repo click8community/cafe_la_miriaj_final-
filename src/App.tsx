@@ -1968,6 +1968,30 @@ function VirtualTableBooking({ scale }: { scale: number }) {
         ? "Continue"
         : "Confirm Booking";
 
+  function renderBookingActions(insidePanel = false) {
+    return (
+      <div className={`booking-actions${insidePanel ? " is-panel" : ""}`}>
+        {step > 1 && (
+          <button
+            className="booking-back"
+            type="button"
+            onClick={() => goToStep((step - 1) as BookingStep)}
+          >
+            Back
+          </button>
+        )}
+        <button
+          className="booking-primary"
+          type="button"
+          onClick={handlePrimaryAction}
+          disabled={submitted}
+        >
+          {primaryLabel}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <section
       className="booking-widget"
@@ -2084,6 +2108,7 @@ function VirtualTableBooking({ scale }: { scale: number }) {
                 </select>
               </label>
             </div>
+            {renderBookingActions(true)}
           </div>
         )}
 
@@ -2129,21 +2154,7 @@ function VirtualTableBooking({ scale }: { scale: number }) {
         )}
       </div>
 
-      {!submitted && <div className="booking-actions">
-        {step > 1 && (
-          <button className="booking-back" type="button" onClick={() => goToStep((step - 1) as BookingStep)}>
-            Back
-          </button>
-        )}
-        <button
-          className="booking-primary"
-          type="button"
-          onClick={handlePrimaryAction}
-          disabled={submitted}
-        >
-          {primaryLabel}
-        </button>
-      </div>}
+      {!submitted && step !== 2 && renderBookingActions()}
     </section>
   );
 }
