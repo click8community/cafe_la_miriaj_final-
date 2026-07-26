@@ -162,6 +162,12 @@ try {
   );
 
   await goto(page, "home");
+  if (await clickButton(page, "Discover The Experience")) {
+    await waitForScroll(page, 2500);
+    pass("Discover The Experience reaches the interactive cafe section");
+  }
+
+  await goto(page, "home");
   if (await clickButton(page, "Explore the cafe")) {
     await waitForScroll(page, 2500);
     pass("Explore the Cafe button reaches the floor plan");
