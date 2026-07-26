@@ -637,8 +637,42 @@ button {
   margin: 61px auto 0;
 }
 
+.figma-menu-intro {
+  display: flex;
+  width: 1128px;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin: 38px auto 0;
+  padding-bottom: 22px;
+  border-bottom: 1px solid rgba(227, 178, 60, 0.58);
+}
+
+.figma-menu-intro p {
+  margin: 0;
+  color: #e3b23c;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.figma-menu-intro h2 {
+  margin: 0;
+  color: #fff2d4;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.figma-menu-items.has-intro {
+  margin-top: 32px;
+}
+
 .figma-menu-item {
-  min-height: 140px;
+  min-height: 136px;
 }
 
 .figma-menu-item-heading {
@@ -675,7 +709,7 @@ button {
 }
 
 .figma-menu-item p {
-  margin: 22px 0 0;
+  margin: 12px 0 0;
   color: rgba(255, 242, 212, 0.72);
   font-size: 17px;
   font-weight: 400;

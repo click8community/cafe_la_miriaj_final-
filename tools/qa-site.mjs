@@ -301,7 +301,7 @@ try {
   const menuExpectations = {
     Pizza: "Margherita Pizza",
     Pasta: "Tangy Arrabbiata Pasta",
-    Drinks: "Classic Mint Mojito",
+    Drinks: "Volcachino",
     Shakes: "Oreo Thick Shake",
   };
   for (const [tabName, firstItem] of Object.entries(menuExpectations)) {
@@ -319,6 +319,23 @@ try {
       );
     }
   }
+  await page.getByRole("tab", { name: "Drinks", exact: true }).click();
+  check(
+    "Drinks menu is labelled Alcohol-Free Flavours",
+    (await page.locator(".figma-menu-intro h2").innerText()).trim() ===
+      "Alcohol-Free Flavours",
+  );
+  check(
+    "Drinks menu shows all six cafe signature flavours",
+    (await page.locator(".figma-menu-item h3").allTextContents()).join("|") ===
+      "Volcachino|Irish Fix|Bloomtime|Rum Rebel|Amber Rush|Bourbon Berry",
+  );
+  check(
+    "Every signature drink has an alcohol-free description",
+    (await page.locator(".figma-menu-item p").allTextContents()).every((description) =>
+      description.startsWith("Alcohol-free"),
+    ),
+  );
   if (await clickButton(page, "Explore the Menu")) {
     await waitForScroll(page, 500);
     pass("Kiosk menu button returns to the menu list");

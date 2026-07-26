@@ -451,7 +451,7 @@ const figmaMenuSection = {
   x: 0,
   y: 750,
   width: 1728,
-  height: 760,
+  height: 1410,
 };
 
 const figmaMenuCategories = [
@@ -504,20 +504,40 @@ const figmaMenuCategories = [
     label: "Drinks",
     items: [
       {
-        name: "Classic Mint Mojito",
-        price: "₹149",
+        name: "Volcachino",
+        price: "₹319",
+        description:
+          "Alcohol-free coffee cooler with roasted coffee, cocoa and smooth vanilla notes.",
       },
       {
-        name: "Chilly Guava",
-        price: "₹179",
+        name: "Irish Fix",
+        price: "₹329",
+        description:
+          "Alcohol-free Irish-cream-inspired flavour with creamy coffee, vanilla and brown-sugar notes.",
       },
       {
-        name: "Cold Brew",
-        price: "₹240",
+        name: "Bloomtime",
+        price: "₹339",
+        description:
+          "Alcohol-free floral cooler with bright citrus, berry and delicate blossom notes.",
       },
       {
-        name: "Cold Coffee Frappe",
-        price: "₹219",
+        name: "Rum Rebel",
+        price: "₹349",
+        description:
+          "Alcohol-free rum-inspired flavour with caramel, vanilla, citrus and warm-spice notes.",
+      },
+      {
+        name: "Amber Rush",
+        price: "₹359",
+        description:
+          "Alcohol-free amber fruit cooler with orange, apple and soft caramel notes.",
+      },
+      {
+        name: "Bourbon Berry",
+        price: "₹369",
+        description:
+          "Alcohol-free bourbon-inspired berry cooler with mixed berries, vanilla, caramel and oak-like notes.",
       },
     ],
   },
@@ -1060,8 +1080,17 @@ function FigmaMenuSection({ scale }: { scale: number }) {
         })}
       </div>
 
+      {activeCategory.key === "drinks" && (
+        <div className="figma-menu-intro">
+          <p>Signature Collection</p>
+          <h2>Alcohol-Free Flavours</h2>
+        </div>
+      )}
+
       <div
-        className="figma-menu-items"
+        className={`figma-menu-items${
+          activeCategory.key === "drinks" ? " has-intro" : ""
+        }`}
         id="figma-menu-items"
         role="tabpanel"
         aria-live="polite"
@@ -1073,6 +1102,7 @@ function FigmaMenuSection({ scale }: { scale: number }) {
               <span aria-hidden="true" />
               <strong>{item.price}</strong>
             </div>
+            {"description" in item && <p>{item.description}</p>}
           </article>
         ))}
       </div>
