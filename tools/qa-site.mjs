@@ -590,13 +590,13 @@ try {
     };
   });
   check(
-    "Wide desktop uses the full Figma canvas",
-    wideDesktopDimensions.shellWidth >= 1727,
+    "Wide desktop hero fills the viewport",
+    Math.abs(wideDesktopDimensions.shellWidth - wideDesktopDimensions.viewportWidth) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
-    "Wide desktop hero side margins stay compact",
-    wideDesktopDimensions.sideMargin <= 90,
+    "Wide desktop hero has no empty side margins",
+    wideDesktopDimensions.sideMargin < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
