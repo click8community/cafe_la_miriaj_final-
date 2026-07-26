@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.vercel/
+.env*
+
+tmp-*/
+tmp-*.png
+tmp-*.jpg
+tmp-*.jpeg
+tmp-*.webp
+tmp-*.json
