@@ -329,8 +329,19 @@ const exploreCafeZones: ExploreCafeZone[] = [
     action: "placeKiosk",
     x: 294,
     y: 808,
-    width: 408,
+    width: 360,
     height: 148,
+  },
+  {
+    id: "sunset-seating",
+    name: "Sunset Seating",
+    description:
+      "Front-row rooftop seating for golden-hour views, relaxed conversations and coffee as the city turns to evening.",
+    action: "reserve",
+    x: 660,
+    y: 820,
+    width: 270,
+    height: 122,
   },
   {
     id: "lounge-seating",

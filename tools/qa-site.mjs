@@ -196,6 +196,7 @@ try {
     "Seating",
     "Projector",
     "Kiosk",
+    "Sunset Seating",
     "Lounge Seating",
     "Snooker",
   ];
