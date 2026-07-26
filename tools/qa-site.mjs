@@ -133,6 +133,12 @@ try {
   }
 
   await goto(page, "about");
+  check(
+    "About reservation panel displays the current cafe phone number",
+    (await page.locator(".about-reservation-cta").innerText()).includes(
+      "+91 78455 95590",
+    ),
+  );
   if (await clickButton(page, "Make a Reservation")) {
     await waitForHash(page, "#home");
     await waitForScroll(page, 7000);
@@ -162,6 +168,12 @@ try {
   );
 
   await goto(page, "home");
+  check(
+    "Home reservation panel displays the current cafe phone number",
+    (await page.locator(".home-reservation-phone").innerText()).trim() ===
+      "+91 78455 95590",
+  );
+
   check(
     "Explore the Cafe title instructs visitors to click",
     (
@@ -437,8 +449,10 @@ try {
     if (label === "Call Cafe La Mirajh") {
       const phoneButton = page.getByRole("button", { name: label, exact: true });
       check(
-        "Footer displays the original cafe phone number",
-        (await phoneButton.innerText()).trim() === "+91 87788 23007",
+        "Footer displays the current cafe phone number",
+        (await phoneButton.innerText()).trim() === "+91 78455 95590" &&
+          (await phoneButton.getAttribute("data-phone-href")) ===
+            "tel:+917845595590",
         await phoneButton.innerText(),
       );
     }

@@ -146,7 +146,7 @@ const instagramUrl = "https://www.instagram.com/cafe_la_mirajh_/";
 const facebookUrl = "https://www.facebook.com/search/top?q=Cafe%20La%20Mirajh";
 const twitterUrl = "https://twitter.com/search?q=%22Cafe%20La%20Mirajh%22";
 const mapUrl = "https://www.google.com/maps/dir/?api=1&destination=13.0865409%2C80.2205116";
-const phoneHref = "tel:+918778823007";
+const phoneHref = "tel:+917845595590";
 const eventPhoneHref = phoneHref;
 const emailHref = "mailto:hello@cafelamirajh.com";
 
@@ -262,6 +262,13 @@ const heroExploreCafeButton = {
   width: 346,
   height: 77,
   targetY: 3310,
+};
+
+const homeReservationPhone = {
+  x: 1126,
+  y: 9096,
+  width: 190,
+  height: 32,
 };
 
 const exploreCafeExperience = {
@@ -980,6 +987,7 @@ function FigmaPage({
         className="shared-footer-phone"
         type="button"
         aria-label="Call Cafe La Mirajh"
+        data-phone-href={phoneHref}
         style={{
           left: sharedFooterPhone.x * scale,
           top: (contentBottom + sharedFooterPhone.y) * scale,
@@ -989,7 +997,7 @@ function FigmaPage({
         }}
         onClick={() => onNavigate("phone")}
       >
-        +91 87788 23007
+        +91 78455 95590
       </button>
       {overlays.map((overlay) => (
         <VisualOverlayLayer
@@ -1001,6 +1009,20 @@ function FigmaPage({
       ))}
       {page.key === "home" && <HeroMoodSwitcher scale={scale} />}
       {page.key === "home" && <HeroExploreCafeButton scale={scale} onNavigate={onNavigate} />}
+      {page.key === "home" && (
+        <span
+          className="home-reservation-phone"
+          style={{
+            left: homeReservationPhone.x * scale,
+            top: homeReservationPhone.y * scale,
+            width: homeReservationPhone.width * scale,
+            height: homeReservationPhone.height * scale,
+            fontSize: 17 * scale,
+          }}
+        >
+          +91 78455 95590
+        </span>
+      )}
       {page.key === "home" && <HomeRooftopEscapePhoto scale={scale} />}
       {page.key === "home" && (
         <ExploreCafeExperience scale={scale} onNavigate={onNavigate} />
@@ -1139,7 +1161,7 @@ function AboutReservationCta({
       <h2 id="about-reservation-title">
         Reserve your table in the <span>Sky</span>
       </h2>
-      <p>Open Daily: 10:00 AM - 11:00 PM · Reservations: +91 87788 23007</p>
+      <p>Open Daily: 10:00 AM - 11:00 PM · Reservations: +91 78455 95590</p>
       <button type="button" onClick={() => onNavigate("reserve")}>
         Make a Reservation
       </button>
