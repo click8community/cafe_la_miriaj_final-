@@ -246,7 +246,7 @@ try {
   const menuExpectations = {
     Pizza: "Margherita Pizza",
     Pasta: "Tangy Arrabbiata Pasta",
-    Drinks: "Cappuccino",
+    Drinks: "Classic Mint Mojito",
     Shakes: "Oreo Thick Shake",
   };
   for (const [tabName, firstItem] of Object.entries(menuExpectations)) {

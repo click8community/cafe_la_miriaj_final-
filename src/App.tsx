@@ -495,24 +495,24 @@ const figmaMenuCategories = [
     label: "Drinks",
     items: [
       {
-        name: "Cappuccino",
-        description: "Espresso topped with steamed milk and a layer of foam.",
-        price: "₹220",
+        name: "Classic Mint Mojito",
+        description: "",
+        price: "₹149",
       },
       {
-        name: "Mocha",
-        description: "Coffee and chocolate finished with steamed milk.",
-        price: "₹280",
+        name: "Chilly Guava",
+        description: "",
+        price: "₹179",
       },
       {
         name: "Cold Brew",
-        description: "Slow-steeped coffee served chilled and smooth.",
+        description: "",
         price: "₹240",
       },
       {
-        name: "Hazelnut Latte",
-        description: "Espresso, steamed milk, and roasted hazelnut.",
-        price: "₹290",
+        name: "Cold Coffee Frappe",
+        description: "",
+        price: "₹219",
       },
     ],
   },
@@ -1095,7 +1095,7 @@ function FigmaMenuSection({ scale }: { scale: number }) {
               <span aria-hidden="true" />
               <strong>{item.price}</strong>
             </div>
-            <p>{item.description}</p>
+            {item.description && <p>{item.description}</p>}
           </article>
         ))}
       </div>
