@@ -1,0 +1,15 @@
+node_modules/
+dist/
+.vercel/
+
+*.log
+.env
+.env.*
+!.env.example
+
+tmp-*/
+tmp-*.png
+tmp-*.jpg
+tmp-*.jpeg
+tmp-*.webp
+tmp-*.json

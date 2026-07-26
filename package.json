@@ -1,0 +1,23 @@
+{
+  "name": "cafe-la-miraj-figma-site",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "vite build",
+    "qa": "node tools/qa-site.mjs",
+    "preview": "vite preview --host 127.0.0.1",
+    "capture:figma": "node tools/capture-figma.mjs"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^5.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^7.0.6"
+  },
+  "devDependencies": {
+    "playwright": "^1.62.0"
+  }
+}
