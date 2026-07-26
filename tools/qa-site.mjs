@@ -228,8 +228,19 @@ try {
       );
       pass(`${zone} floor-plan detail opens`);
       if (zone === "Entrance") {
-        const sectionBox = await page.locator(".explore-cafe-experience").boundingBox();
-        const detailBox = await page.locator(".explore-cafe-detail").boundingBox();
+        const { sectionBox, detailBox } = await page.evaluate(() => {
+          const section = document.querySelector(".explore-cafe-experience")?.getBoundingClientRect();
+          const detail = document.querySelector(".explore-cafe-detail")?.getBoundingClientRect();
+          const toBox = (rect) =>
+            rect
+              ? { x: rect.x, y: rect.y, width: rect.width, height: rect.height }
+              : null;
+
+          return {
+            sectionBox: toBox(section),
+            detailBox: toBox(detail),
+          };
+        });
         check(
           "Floor-plan detail covers the full Explore the Cafe section",
           sectionBox &&
@@ -566,6 +577,33 @@ try {
       `${dimensions.documentWidth}px > ${dimensions.viewportWidth}px`,
     );
   }
+
+  await laptopPage.setViewportSize({ width: 1897, height: 964 });
+  await laptopPage.goto(`${baseUrl}/#home`, { waitUntil: "networkidle" });
+  const wideDesktopDimensions = await laptopPage.evaluate(() => {
+    const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
+    return {
+      viewportWidth: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      shellWidth: shell?.width ?? 0,
+      sideMargin: shell ? (window.innerWidth - shell.width) / 2 : Infinity,
+    };
+  });
+  check(
+    "Wide desktop uses the full Figma canvas",
+    wideDesktopDimensions.shellWidth >= 1727,
+    JSON.stringify(wideDesktopDimensions),
+  );
+  check(
+    "Wide desktop hero side margins stay compact",
+    wideDesktopDimensions.sideMargin <= 90,
+    JSON.stringify(wideDesktopDimensions),
+  );
+  check(
+    "Wide desktop has no horizontal overflow",
+    wideDesktopDimensions.documentWidth <= wideDesktopDimensions.viewportWidth,
+    JSON.stringify(wideDesktopDimensions),
+  );
   await laptopContext.close();
 
   const mobileContext = await browser.newContext({
