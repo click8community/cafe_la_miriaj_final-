@@ -146,8 +146,8 @@ const instagramUrl = "https://www.instagram.com/cafe_la_mirajh_/";
 const facebookUrl = "https://www.facebook.com/search/top?q=Cafe%20La%20Mirajh";
 const twitterUrl = "https://twitter.com/search?q=%22Cafe%20La%20Mirajh%22";
 const mapUrl = "https://www.google.com/maps/dir/?api=1&destination=13.0865409%2C80.2205116";
-const phoneHref = "tel:+919876543210";
-const eventPhoneHref = "tel:+918778823007";
+const phoneHref = "tel:+918778823007";
+const eventPhoneHref = phoneHref;
 const emailHref = "mailto:hello@cafelamirajh.com";
 
 const pageHotspots: Partial<Record<PageKey, Hotspot[]>> = {
@@ -739,6 +739,13 @@ const sharedFooter = {
   height: 1202,
 };
 
+const sharedFooterPhone = {
+  x: 150,
+  y: 598,
+  width: 230,
+  height: 42,
+};
+
 function getContentOffset(pageKey: PageKey) {
   return pageKey === "places" ? sharedHeader.height : 0;
 }
@@ -749,7 +756,6 @@ function getFooterTop(pageKey: PageKey) {
 
 const sharedFooterHotspots: Hotspot[] = [
   { label: "Open location in maps", action: "map", x: 72, y: 400, width: 455, height: 145 },
-  { label: "Call Cafe La Mirajh", action: "phone", x: 72, y: 570, width: 420, height: 120 },
   { label: "Email Cafe La Mirajh", action: "email", x: 72, y: 700, width: 460, height: 120 },
   { label: "Open map directions", action: "map", x: 938, y: 328, width: 738, height: 650 },
   { label: "Instagram", action: "instagram", x: 72, y: 978, width: 64, height: 64 },
@@ -959,6 +965,21 @@ function FigmaPage({
         height={sharedFooter.height}
         draggable={false}
       />
+      <button
+        className="shared-footer-phone"
+        type="button"
+        aria-label="Call Cafe La Mirajh"
+        style={{
+          left: sharedFooterPhone.x * scale,
+          top: (contentBottom + sharedFooterPhone.y) * scale,
+          width: sharedFooterPhone.width * scale,
+          height: sharedFooterPhone.height * scale,
+          fontSize: 22 * scale,
+        }}
+        onClick={() => onNavigate("phone")}
+      >
+        +91 87788 23007
+      </button>
       {overlays.map((overlay) => (
         <VisualOverlayLayer
           key={overlay.label}
@@ -1107,7 +1128,7 @@ function AboutReservationCta({
       <h2 id="about-reservation-title">
         Reserve your table in the <span>Sky</span>
       </h2>
-      <p>Open Daily: 10:00 AM - 11:00 PM · Reservations: +91 98765 43210</p>
+      <p>Open Daily: 10:00 AM - 11:00 PM · Reservations: +91 87788 23007</p>
       <button type="button" onClick={() => onNavigate("reserve")}>
         Make a Reservation
       </button>
@@ -1383,8 +1404,8 @@ function ExploreCafeExperience({
   const transitionTimeout = useRef<number | null>(null);
   const activeZone = exploreCafeZones.find((zone) => zone.id === activeZoneId) ?? null;
   const detailZone = exploreCafeZones.find((zone) => zone.id === detailZoneId) ?? null;
-  const detailMediaWidth = 650;
-  const detailMediaHeight = exploreCafeExperience.model.height;
+  const detailMediaWidth = 1008;
+  const detailMediaHeight = exploreCafeExperience.height;
   const detailZoom = 2;
 
   useEffect(() => {
@@ -1479,10 +1500,10 @@ function ExploreCafeExperience({
           className="explore-cafe-detail"
           aria-live="polite"
           style={{
-            left: exploreCafeExperience.model.x,
-            top: exploreCafeExperience.model.y,
-            width: exploreCafeExperience.model.width,
-            height: exploreCafeExperience.model.height,
+            left: 0,
+            top: 0,
+            width: exploreCafeExperience.width,
+            height: exploreCafeExperience.height,
           }}
         >
           <div className="explore-cafe-detail-copy">

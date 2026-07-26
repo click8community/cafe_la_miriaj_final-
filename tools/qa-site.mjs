@@ -186,6 +186,20 @@ try {
         { timeout: 3000 },
       );
       pass(`${zone} floor-plan detail opens`);
+      if (zone === "Entrance") {
+        const sectionBox = await page.locator(".explore-cafe-experience").boundingBox();
+        const detailBox = await page.locator(".explore-cafe-detail").boundingBox();
+        check(
+          "Floor-plan detail covers the full Explore the Cafe section",
+          sectionBox &&
+            detailBox &&
+            Math.abs(sectionBox.x - detailBox.x) < 1 &&
+            Math.abs(sectionBox.y - detailBox.y) < 1 &&
+            Math.abs(sectionBox.width - detailBox.width) < 1 &&
+            Math.abs(sectionBox.height - detailBox.height) < 1,
+          `section=${JSON.stringify(sectionBox)} detail=${JSON.stringify(detailBox)}`,
+        );
+      }
       if (await clickButton(page, "Back to floor plan")) {
         await page.waitForFunction(
           () => !document.querySelector(".explore-cafe-detail"),
@@ -396,6 +410,14 @@ try {
     ["Email Cafe La Mirajh", "Email opened"],
   ]) {
     await goto(page, "home");
+    if (label === "Call Cafe La Mirajh") {
+      const phoneButton = page.getByRole("button", { name: label, exact: true });
+      check(
+        "Footer displays the original cafe phone number",
+        (await phoneButton.innerText()).trim() === "+91 87788 23007",
+        await phoneButton.innerText(),
+      );
+    }
     if (await clickButton(page, label)) {
       const liveStatus = await page.locator(".sr-only").textContent();
       check(`${label} triggers its action`, liveStatus?.includes(status), liveStatus);
