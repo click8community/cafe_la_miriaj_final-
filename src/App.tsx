@@ -444,22 +444,18 @@ const figmaMenuCategories = [
     items: [
       {
         name: "Margherita Pizza",
-        description: "Classic pizza with basil, cherry tomatoes, and mozzarella.",
         price: "₹349",
       },
       {
         name: "Garden Fresh Pizza",
-        description: "Fresh vegetables topped with herbs and cheese.",
         price: "₹399",
       },
       {
         name: "Mexican Pizza",
-        description: "A spicy Mexican-inspired pizza with bold, savoury toppings.",
         price: "₹429",
       },
       {
         name: "Chicken Fest Pizza",
-        description: "A loaded chicken pizza finished with cheese.",
         price: "₹449",
       },
     ],
@@ -470,22 +466,18 @@ const figmaMenuCategories = [
     items: [
       {
         name: "Tangy Arrabbiata Pasta",
-        description: "Spicy tomato-based pasta with red herbs.",
         price: "₹279",
       },
       {
         name: "White Sauce Alfredo Pasta",
-        description: "Creamy Alfredo pasta with a rich cheese flavour.",
         price: "₹299",
       },
       {
-        name: "Creamy Makhani Pasta",
-        description: "Pink-sauce pasta with creamy makhani spices.",
+        name: "Creamy Makhani Pasta (Pink Sauce)",
         price: "₹279",
       },
       {
         name: "Mac & Cheese Pasta",
-        description: "Creamy, cheesy pasta baked to perfection.",
         price: "₹349",
       },
     ],
@@ -496,22 +488,18 @@ const figmaMenuCategories = [
     items: [
       {
         name: "Classic Mint Mojito",
-        description: "",
         price: "₹149",
       },
       {
         name: "Chilly Guava",
-        description: "",
         price: "₹179",
       },
       {
         name: "Cold Brew",
-        description: "",
         price: "₹240",
       },
       {
         name: "Cold Coffee Frappe",
-        description: "",
         price: "₹219",
       },
     ],
@@ -522,22 +510,18 @@ const figmaMenuCategories = [
     items: [
       {
         name: "Oreo Thick Shake",
-        description: "Oreo cookies blended into a thick, creamy shake.",
         price: "₹219",
       },
       {
         name: "Cold Milo",
-        description: "Chilled Milo blended smooth and creamy.",
         price: "₹239",
       },
       {
         name: "Chocolate Overloaded",
-        description: "A rich chocolate shake loaded with chocolate.",
         price: "₹249",
       },
       {
         name: "Ferrero Rocher Shake",
-        description: "Ferrero Rocher blended into a creamy chocolate shake.",
         price: "₹289",
       },
     ],
@@ -1095,7 +1079,6 @@ function FigmaMenuSection({ scale }: { scale: number }) {
               <span aria-hidden="true" />
               <strong>{item.price}</strong>
             </div>
-            {item.description && <p>{item.description}</p>}
           </article>
         ))}
       </div>
