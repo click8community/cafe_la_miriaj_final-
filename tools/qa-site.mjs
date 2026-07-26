@@ -431,6 +431,20 @@ try {
       `${href} target=${target}`,
     );
   }
+  const instagramPosts = page.locator(".instagram-story-photo");
+  check(
+    "Gallery displays all 17 Instagram posts",
+    (await instagramPosts.count()) === 17,
+  );
+  check(
+    "Instagram posts use equal square dimensions",
+    await instagramPosts.evaluateAll((posts) =>
+      posts.every((post) => {
+        const { width, height } = post.getBoundingClientRect();
+        return Math.abs(width - height) < 1;
+      }),
+    ),
+  );
 
   const reserveButtons = [
     "Reserve entrance",

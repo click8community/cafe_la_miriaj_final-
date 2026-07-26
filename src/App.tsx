@@ -121,7 +121,7 @@ const pages: Record<PageKey, PageSpec> = {
     src: "/figma-exports/gallery-page.png",
     width: 1728,
     height: 4282,
-    contentHeight: 4862,
+    contentHeight: 6022,
   },
   places: {
     key: "places",
@@ -400,7 +400,7 @@ const homeRooftopEscapePhoto = {
 const instagramStorySection = {
   top: 2472,
   width: 1728,
-  height: 2390,
+  height: 3550,
 };
 
 const instagramStoryPhotos = Array.from(
