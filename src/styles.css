@@ -29,6 +29,7 @@ button {
 .site-frame {
   width: 100%;
   min-height: 100vh;
+  background: #002c34;
 }
 
 .page-shell {
@@ -37,6 +38,12 @@ button {
   margin: 0 auto;
   overflow-x: clip;
   background: #f9edd1;
+}
+
+@media (min-width: 900px) and (max-height: 1100px) {
+  .page-shell {
+    width: min(100%, var(--page-width), calc(157.09vh - 38px));
+  }
 }
 
 .page-image-clip {
@@ -55,12 +62,13 @@ button {
 .site-header {
   position: fixed;
   top: 0;
-  left: 50%;
+  left: 0;
   z-index: 80;
+  width: 100%;
   overflow: hidden;
   background: #fff2d4;
   box-shadow: 0 1px 0 rgba(0, 44, 52, 0.12);
-  transform: translateX(-50%);
+  transform: translateY(0);
   transition:
     transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 180ms ease;
@@ -68,7 +76,12 @@ button {
 }
 
 .site-header.is-hidden {
-  transform: translate(-50%, -110%);
+  transform: translateY(-110%);
+}
+
+.site-header-inner {
+  position: relative;
+  margin: 0 auto;
 }
 
 .site-header-logo-button {

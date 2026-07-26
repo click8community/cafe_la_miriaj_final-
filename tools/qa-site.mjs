@@ -506,6 +506,53 @@ try {
   await page.waitForFunction(() => !document.querySelector(".site-header")?.classList.contains("is-hidden"));
   pass("Header returns while scrolling up");
 
+  const laptopContext = await browser.newContext({ reducedMotion: "reduce" });
+  const laptopPage = await laptopContext.newPage();
+  for (const viewport of [
+    { width: 1366, height: 768 },
+    { width: 1536, height: 864 },
+  ]) {
+    await laptopPage.setViewportSize(viewport);
+    await laptopPage.goto(`${baseUrl}/#home`, { waitUntil: "networkidle" });
+    const dimensions = await laptopPage.evaluate(() => {
+      const hero = document.querySelector(".hero-mood")?.getBoundingClientRect();
+      const header = document.querySelector(".site-header")?.getBoundingClientRect();
+      const headerInner = document.querySelector(".site-header-inner")?.getBoundingClientRect();
+      return {
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        documentWidth: document.documentElement.scrollWidth,
+        heroBottom: hero?.bottom ?? Infinity,
+        headerWidth: header?.width ?? 0,
+        headerInnerLeft: headerInner?.left ?? -1,
+        headerInnerRight: headerInner?.right ?? Infinity,
+      };
+    });
+    const label = `${viewport.width}x${viewport.height}`;
+    check(
+      `${label} laptop hero fits the first screen`,
+      dimensions.heroBottom <= dimensions.viewportHeight - 18,
+      `hero bottom ${dimensions.heroBottom}px`,
+    );
+    check(
+      `${label} laptop header spans the viewport`,
+      Math.abs(dimensions.headerWidth - dimensions.viewportWidth) < 1,
+      `${dimensions.headerWidth}px != ${dimensions.viewportWidth}px`,
+    );
+    check(
+      `${label} laptop header content stays on screen`,
+      dimensions.headerInnerLeft >= 0 &&
+        dimensions.headerInnerRight <= dimensions.viewportWidth,
+      `${dimensions.headerInnerLeft}px to ${dimensions.headerInnerRight}px`,
+    );
+    check(
+      `${label} laptop has no horizontal overflow`,
+      dimensions.documentWidth <= dimensions.viewportWidth,
+      `${dimensions.documentWidth}px > ${dimensions.viewportWidth}px`,
+    );
+  }
+  await laptopContext.close();
+
   const mobileContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
     reducedMotion: "reduce",

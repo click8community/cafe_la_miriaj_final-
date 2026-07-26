@@ -859,7 +859,10 @@ export function App() {
   }
 
   return (
-    <main className="site-frame" style={{ "--page-width": `${page.width}px` } as CSSProperties}>
+    <main
+      className={`site-frame site-frame-${activePage}`}
+      style={{ "--page-width": `${page.width}px` } as CSSProperties}
+    >
       <FigmaPage
         key={page.key}
         page={page}
@@ -1815,71 +1818,78 @@ function HeaderNav({
     <header
       className={`site-header${isHidden ? " is-hidden" : ""}`}
       style={{
-        width: siteHeaderLayout.width * scale,
         height: siteHeaderLayout.height * scale,
       }}
     >
-      <button
-        className="site-header-logo-button"
-        type="button"
-        aria-label="Go to home"
+      <div
+        className="site-header-inner"
         style={{
-          left: siteHeaderLayout.logo.x * scale,
-          top: siteHeaderLayout.logo.y * scale,
-          width: siteHeaderLayout.logo.width * scale,
-          height: siteHeaderLayout.logo.height * scale,
+          width: siteHeaderLayout.width * scale,
+          height: siteHeaderLayout.height * scale,
         }}
-        onClick={() => onNavigate("home")}
       >
-        <img src="/figma-exports/miraj-logo-seal-transparent.png" alt="" draggable={false} />
-      </button>
+        <button
+          className="site-header-logo-button"
+          type="button"
+          aria-label="Go to home"
+          style={{
+            left: siteHeaderLayout.logo.x * scale,
+            top: siteHeaderLayout.logo.y * scale,
+            width: siteHeaderLayout.logo.width * scale,
+            height: siteHeaderLayout.logo.height * scale,
+          }}
+          onClick={() => onNavigate("home")}
+        >
+          <img src="/figma-exports/miraj-logo-seal-transparent.png" alt="" draggable={false} />
+        </button>
 
-      <nav
-        className="dynamic-nav"
-        aria-label="Main navigation"
-        style={{
-          left: siteHeaderLayout.nav.x * scale,
-          top: siteHeaderLayout.nav.y * scale,
-          width: siteHeaderLayout.nav.width * scale,
-          height: siteHeaderLayout.nav.height * scale,
-        }}
-      >
-        {headerNavItems.map((item) => {
-          const isActive = item.action === activePage;
-          return (
-            <button
-              key={item.label}
-              className={`dynamic-nav-link${isActive ? " is-active" : ""}`}
-              type="button"
-              aria-current={isActive ? "page" : undefined}
-              style={{
-                width: item.width * scale,
-                height: siteHeaderLayout.nav.height * scale,
-                fontSize: 28 * scale,
-                lineHeight: `${siteHeaderLayout.nav.height * scale}px`,
-              }}
-              onClick={() => onNavigate(item.action)}
-            >
-              {item.label}
-            </button>
-          );
-        })}
-      </nav>
+        <nav
+          className="dynamic-nav"
+          aria-label="Main navigation"
+          style={{
+            left: siteHeaderLayout.nav.x * scale,
+            top: siteHeaderLayout.nav.y * scale,
+            width: siteHeaderLayout.nav.width * scale,
+            height: siteHeaderLayout.nav.height * scale,
+          }}
+        >
+          {headerNavItems.map((item) => {
+            const isActive = item.action === activePage;
+            return (
+              <button
+                key={item.label}
+                className={`dynamic-nav-link${isActive ? " is-active" : ""}`}
+                type="button"
+                aria-current={isActive ? "page" : undefined}
+                style={{
+                  width: item.width * scale,
+                  height: siteHeaderLayout.nav.height * scale,
+                  fontSize: 28 * scale,
+                  lineHeight: `${siteHeaderLayout.nav.height * scale}px`,
+                }}
+                onClick={() => onNavigate(item.action)}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
 
-      <button
-        className="site-header-reserve-button"
-        type="button"
-        style={{
-          left: siteHeaderLayout.reserve.x * scale,
-          top: siteHeaderLayout.reserve.y * scale,
-          width: siteHeaderLayout.reserve.width * scale,
-          height: siteHeaderLayout.reserve.height * scale,
-          fontSize: 25 * scale,
-        }}
-        onClick={() => onNavigate("reserve")}
-      >
-        Reserve Table
-      </button>
+        <button
+          className="site-header-reserve-button"
+          type="button"
+          style={{
+            left: siteHeaderLayout.reserve.x * scale,
+            top: siteHeaderLayout.reserve.y * scale,
+            width: siteHeaderLayout.reserve.width * scale,
+            height: siteHeaderLayout.reserve.height * scale,
+            fontSize: 25 * scale,
+          }}
+          onClick={() => onNavigate("reserve")}
+        >
+          Reserve Table
+        </button>
+      </div>
     </header>
   );
 }
