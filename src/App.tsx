@@ -1487,7 +1487,7 @@ function ExploreCafeExperience({
           className="explore-cafe-instruction-replacement"
           aria-label="Click. Explore. Experience."
         >
-          CLICK .
+          CLICK . EXPLORE . EXPERIENCE
         </div>
       )}
 

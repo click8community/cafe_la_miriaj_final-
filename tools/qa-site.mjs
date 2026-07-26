@@ -166,7 +166,7 @@ try {
     "Explore the Cafe title instructs visitors to click",
     (
       await page.locator(".explore-cafe-instruction-replacement").textContent()
-    )?.trim() === "CLICK .",
+    )?.trim() === "CLICK . EXPLORE . EXPERIENCE",
   );
 
   if (await clickButton(page, "Discover The Experience")) {

@@ -1464,17 +1464,17 @@ button {
 .explore-cafe-instruction-replacement {
   position: absolute;
   top: 166px;
-  left: 584px;
+  left: 580px;
   z-index: 5;
   display: flex;
-  width: 164px;
+  width: 575px;
   height: 62px;
   align-items: center;
   justify-content: center;
   background: #f7eacc;
   color: #d9a940;
   font-family: Arial, Helvetica, sans-serif;
-  font-size: 35px;
+  font-size: 34px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1;
