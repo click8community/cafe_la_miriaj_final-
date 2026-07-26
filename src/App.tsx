@@ -153,7 +153,7 @@ const emailHref = "mailto:hello@cafelamirajh.com";
 const pageHotspots: Partial<Record<PageKey, Hotspot[]>> = {
   home: [
     { label: "Discover The Experience", action: "exploreCafe", x: 72, y: 1390, width: 280, height: 48 },
-    { label: "Explore cafe specials", action: "menu", x: 72, y: 1772, width: 245, height: 62 },
+    { label: "Explore Cafe Specials", action: "menuList", x: 72, y: 1772, width: 245, height: 62 },
     { label: "More about Mirajh", action: "about", x: 1110, y: 8610, width: 265, height: 62 },
     { label: "Check our Instagram", action: "instagram", x: 608, y: 9038, width: 420, height: 86 },
     { label: "Reserve your spot", action: "eventPhone", x: 1058, y: 9054, width: 235, height: 94 },

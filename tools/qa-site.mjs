@@ -168,6 +168,16 @@ try {
   }
 
   await goto(page, "home");
+  if (await clickButton(page, "Explore Cafe Specials")) {
+    await waitForHash(page, "#menu");
+    await waitForScroll(page, 500);
+    check(
+      "Explore Cafe Specials reaches the interactive menu",
+      (await page.locator(".figma-menu-section").count()) === 1,
+    );
+  }
+
+  await goto(page, "home");
   if (await clickButton(page, "Explore the cafe")) {
     await waitForScroll(page, 2500);
     pass("Explore the Cafe button reaches the floor plan");
