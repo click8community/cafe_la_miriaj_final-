@@ -1461,6 +1461,27 @@ button {
   pointer-events: none;
 }
 
+.explore-cafe-instruction-replacement {
+  position: absolute;
+  top: 166px;
+  left: 584px;
+  z-index: 5;
+  display: flex;
+  width: 164px;
+  height: 62px;
+  align-items: center;
+  justify-content: center;
+  background: #f7eacc;
+  color: #d9a940;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 35px;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1;
+  pointer-events: none;
+  text-transform: uppercase;
+}
+
 .explore-cafe-zone {
   position: absolute;
   display: block;
@@ -1768,7 +1789,8 @@ button {
 }
 
 .explore-cafe-experience.is-dissolving .explore-cafe-zone-map,
-.explore-cafe-experience.is-dissolving .explore-cafe-zone-card {
+.explore-cafe-experience.is-dissolving .explore-cafe-zone-card,
+.explore-cafe-experience.is-dissolving .explore-cafe-instruction-replacement {
   animation: none;
   opacity: 0;
   transition: opacity 120ms ease;

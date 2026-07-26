@@ -162,6 +162,13 @@ try {
   );
 
   await goto(page, "home");
+  check(
+    "Explore the Cafe title instructs visitors to click",
+    (
+      await page.locator(".explore-cafe-instruction-replacement").textContent()
+    )?.trim() === "CLICK .",
+  );
+
   if (await clickButton(page, "Discover The Experience")) {
     await waitForScroll(page, 2500);
     pass("Discover The Experience reaches the interactive cafe section");

@@ -1482,6 +1482,15 @@ function ExploreCafeExperience({
         </div>
       )}
 
+      {!detailZone && (
+        <div
+          className="explore-cafe-instruction-replacement"
+          aria-label="Click. Explore. Experience."
+        >
+          CLICK .
+        </div>
+      )}
+
       {activeZone && !detailZone && (
         <aside
           id="explore-cafe-zone-description"
