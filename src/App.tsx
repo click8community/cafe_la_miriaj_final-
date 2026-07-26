@@ -94,10 +94,10 @@ const pages: Record<PageKey, PageSpec> = {
   about: {
     key: "about",
     label: "About",
-    src: "/figma-exports/about-page.png",
+    src: "/figma-exports/about-page-1.png?v=1",
     width: 1728,
-    height: 4011,
-    contentHeight: 3290,
+    height: 1080,
+    contentHeight: 1080,
   },
   menu: {
     key: "menu",
@@ -160,8 +160,7 @@ const pageHotspots: Partial<Record<PageKey, Hotspot[]>> = {
     { label: "See full event calendar", action: "events", x: 1322, y: 9058, width: 330, height: 82 },
   ],
   about: [
-    { label: "Instagram", action: "instagram", x: 1550, y: 3868, width: 58, height: 58 },
-    { label: "Facebook", action: "facebook", x: 1620, y: 3868, width: 58, height: 58 },
+    { label: "Book a table", action: "reserve", x: 766, y: 732, width: 196, height: 58 },
   ],
   menu: [
     { label: "View kiosk menu", action: "menuList", x: 934, y: 2650, width: 410, height: 90 },
@@ -560,60 +559,6 @@ const heroMoodSwitcher = {
   height: 948,
 };
 
-const aboutHeroReplacement = {
-  top: 150,
-  width: 1728,
-  height: 800,
-  image: "/cafe-photos/photo-15.jpg",
-};
-
-const aboutStoryPhoto = {
-  x: 1008,
-  y: 1070,
-  width: 600,
-  height: 700,
-  image: "/figma-exports/instagram-story/instagram-05.jpg",
-};
-
-const aboutCommunityPhotos = {
-  top: 2234,
-  width: 1728,
-  height: 334,
-  imageHeight: 302,
-  iconTop: 272,
-  iconLeft: 42,
-  iconSize: 64,
-  cards: [
-    {
-      title: "Origin Stories",
-      x: 120,
-      width: 469,
-      image: "/cafe-photos/photo-14.jpg",
-      position: "center center",
-    },
-    {
-      title: "Brewing Together",
-      x: 630,
-      width: 469,
-      image: "/cafe-photos/photo-05.jpg",
-      position: "center center",
-    },
-    {
-      title: "The Third Place",
-      x: 1139,
-      width: 469,
-      image: "/cafe-photos/photo-15.jpg",
-      position: "center 54%",
-    },
-  ],
-};
-
-const aboutReservationCta = {
-  top: 2860,
-  width: 1728,
-  height: 430,
-};
-
 const eventsHeroReplacement = {
   top: 152,
   width: 1728,
@@ -765,6 +710,7 @@ const sharedFooterPhone = {
 };
 
 function getContentOffset(pageKey: PageKey) {
+  if (pageKey === "about") return siteHeaderLayout.height;
   return pageKey === "places" ? sharedHeader.height : 0;
 }
 
@@ -1027,12 +973,6 @@ function FigmaPage({
       {page.key === "home" && (
         <ExploreCafeExperience scale={scale} onNavigate={onNavigate} />
       )}
-      {page.key === "about" && <AboutHeroReplacement scale={scale} />}
-      {page.key === "about" && <AboutStoryPhoto scale={scale} />}
-      {page.key === "about" && <AboutCommunityPhotos scale={scale} />}
-      {page.key === "about" && (
-        <AboutReservationCta scale={scale} onNavigate={onNavigate} />
-      )}
       {page.key === "events" && <EventsHeroReplacement scale={scale} />}
       {page.key === "events" && <CurrentEventsTimeline scale={scale} onNavigate={onNavigate} />}
       {page.key === "gallery" && <InstagramStorySection scale={scale} />}
@@ -1135,133 +1075,6 @@ function FigmaMenuSection({ scale }: { scale: number }) {
             </div>
           </article>
         ))}
-      </div>
-    </section>
-  );
-}
-
-function AboutReservationCta({
-  scale,
-  onNavigate,
-}: {
-  scale: number;
-  onNavigate: (action: Hotspot["action"]) => void;
-}) {
-  return (
-    <section
-      className="about-reservation-cta"
-      aria-labelledby="about-reservation-title"
-      style={{
-        top: aboutReservationCta.top * scale,
-        width: aboutReservationCta.width,
-        height: aboutReservationCta.height,
-        transform: `scale(${scale})`,
-      }}
-    >
-      <h2 id="about-reservation-title">
-        Reserve your table in the <span>Sky</span>
-      </h2>
-      <p>Open Daily: 10:00 AM - 11:00 PM · Reservations: +91 78455 95590</p>
-      <button type="button" onClick={() => onNavigate("reserve")}>
-        Make a Reservation
-      </button>
-    </section>
-  );
-}
-
-function AboutCommunityPhotos({ scale }: { scale: number }) {
-  return (
-    <div
-      className="about-community-photos"
-      aria-label="Cafe La Mirajh community"
-      style={{
-        top: aboutCommunityPhotos.top * scale,
-        width: aboutCommunityPhotos.width,
-        height: aboutCommunityPhotos.height,
-        transform: `scale(${scale})`,
-      }}
-    >
-      {aboutCommunityPhotos.cards.map((card) => (
-        <div
-          className="about-community-photo"
-          key={card.title}
-          style={{
-            left: card.x,
-            width: card.width,
-            height: aboutCommunityPhotos.imageHeight,
-          }}
-        >
-          <img
-            src={card.image}
-            alt={`${card.title} at Cafe La Mirajh`}
-            draggable={false}
-            style={{ objectPosition: card.position }}
-          />
-          <span
-            className="about-community-photo-icon"
-            aria-hidden="true"
-            style={{
-              left: aboutCommunityPhotos.iconLeft,
-              top: aboutCommunityPhotos.iconTop,
-              width: aboutCommunityPhotos.iconSize,
-              height: aboutCommunityPhotos.iconSize,
-            }}
-          />
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function AboutStoryPhoto({ scale }: { scale: number }) {
-  return (
-    <div
-      className="about-story-photo"
-      style={{
-        left: aboutStoryPhoto.x * scale,
-        top: aboutStoryPhoto.y * scale,
-        width: aboutStoryPhoto.width,
-        height: aboutStoryPhoto.height,
-        transform: `scale(${scale})`,
-      }}
-    >
-      <img
-        src={aboutStoryPhoto.image}
-        alt="Cafe La Mirajh guests sharing time in the rooftop lounge"
-        draggable={false}
-      />
-    </div>
-  );
-}
-
-function AboutHeroReplacement({ scale }: { scale: number }) {
-  return (
-    <section
-      className="about-hero-replacement"
-      aria-label="Cafe La Mirajh rooftop interior"
-      style={{
-        top: aboutHeroReplacement.top * scale,
-        width: aboutHeroReplacement.width,
-        height: aboutHeroReplacement.height,
-        transform: `scale(${scale})`,
-      }}
-    >
-      <img
-        src={aboutHeroReplacement.image}
-        alt="The actual Cafe La Mirajh rooftop interior with lounge seating and projector"
-        draggable={false}
-      />
-      <div className="about-hero-shade" aria-hidden="true" />
-      <div className="about-hero-copy">
-        <p>Established 2024</p>
-        <h1>
-          A Legacy of <span>Excellence</span>
-        </h1>
-        <div>
-          Our journey started with a simple vision: to create a space that transcends
-          <br />
-          the ordinary and touches the clouds.
-        </div>
       </div>
     </section>
   );

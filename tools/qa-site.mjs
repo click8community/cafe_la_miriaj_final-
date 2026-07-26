@@ -133,16 +133,21 @@ try {
   }
 
   await goto(page, "about");
+  const aboutPageImage = page.locator(".page-image");
   check(
-    "About reservation panel displays the current cafe phone number",
-    (await page.locator(".about-reservation-cta").innerText()).includes(
-      "+91 78455 95590",
+    "About page uses the About Page 1 Figma frame",
+    (await aboutPageImage.getAttribute("src"))?.includes("about-page-1.png"),
+  );
+  check(
+    "About Page 1 frame loads at high resolution",
+    await aboutPageImage.evaluate(
+      (image) => image.naturalWidth >= 2600 && image.naturalHeight >= 1600,
     ),
   );
-  if (await clickButton(page, "Make a Reservation")) {
+  if (await clickButton(page, "Book a table")) {
     await waitForHash(page, "#home");
     await waitForScroll(page, 7000);
-    pass("About reservation CTA reaches table booking");
+    pass("About Page 1 booking button reaches table booking");
   }
 
   await goto(page, "home");
