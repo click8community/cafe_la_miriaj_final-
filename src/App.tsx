@@ -300,10 +300,10 @@ const exploreCafeZones: ExploreCafeZone[] = [
     height: 210,
   },
   {
-    id: "seating",
-    name: "Seating",
+    id: "skyone-seating",
+    name: "Skyone Seating",
     description:
-      "Comfortable table seating for coffee, conversations and long evenings above the city.",
+      "Comfortable Skyone booth seating for coffee, conversations and long evenings with a rooftop view.",
     action: "reserve",
     x: 548,
     y: 338,

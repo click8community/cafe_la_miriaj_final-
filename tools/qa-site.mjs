@@ -193,7 +193,7 @@ try {
   const cafeZones = [
     "Entrance",
     "Workspace",
-    "Seating",
+    "Skyone Seating",
     "Projector",
     "Kiosk",
     "Sunset Seating",
