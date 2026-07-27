@@ -37,20 +37,10 @@ button {
 
 .page-shell {
   position: relative;
-  width: min(100%, var(--page-width));
-  margin: 0 auto;
-  overflow-x: visible;
+  width: 100%;
+  margin: 0;
+  overflow-x: hidden;
   background: #f9edd1;
-}
-
-@media (min-width: 900px) and (max-height: 1100px) {
-  .page-shell {
-    width: min(100%, var(--page-width), calc(157.09vh - 38px));
-  }
-}
-
-.site-frame-about .page-shell {
-  width: min(100%, var(--page-width));
 }
 
 .site-frame-about .page-image-clip {
@@ -154,47 +144,6 @@ button {
   width: 100%;
   height: auto;
   user-select: none;
-}
-
-.page-side-extension,
-.footer-side-extension {
-  position: absolute;
-  left: 50%;
-  z-index: 0;
-  width: 100vw;
-  overflow: hidden;
-  pointer-events: none;
-  transform: translateX(-50%);
-}
-
-.page-side-extension {
-  top: 0;
-}
-
-.page-side-edge {
-  position: absolute;
-  width: max(0px, calc((100% - var(--side-canvas-width)) / 2 + 1px));
-  filter: blur(7px) saturate(0.9);
-  object-fit: fill;
-  pointer-events: none;
-  user-select: none;
-}
-
-.page-side-edge.is-left {
-  left: 0;
-  transform: scale(1.06);
-  transform-origin: right center;
-}
-
-.page-side-edge.is-right {
-  right: 0;
-  transform: scale(1.06);
-  transform-origin: left center;
-}
-
-.footer-side-extension .page-side-edge {
-  top: 0;
-  height: 100%;
 }
 
 .shared-footer-phone {
@@ -1686,27 +1635,6 @@ button {
   z-index: 2;
   transform-origin: top center;
   pointer-events: none;
-}
-
-.hero-mood-side-fill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 0;
-  width: max(0px, calc((100% - var(--hero-canvas-width)) / 2 + 1px));
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-}
-
-.hero-mood-side-fill.is-left {
-  left: 0;
-  background-image: url("/figma-exports/hero-night-edge-left.png?v=1");
-}
-
-.hero-mood-side-fill.is-right {
-  right: 0;
-  background-image: url("/figma-exports/hero-night-edge-right.png?v=1");
 }
 
 .hero-mood-photo {

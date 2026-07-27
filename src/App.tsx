@@ -994,35 +994,6 @@ function FigmaPage({
 
   return (
     <div ref={shellRef} className="page-shell">
-      <div
-        className="page-side-extension"
-        aria-hidden="true"
-        style={{
-          "--side-canvas-width": `${page.width * scale}px`,
-          height: contentBottom * scale,
-        } as CSSProperties}
-      >
-        <img
-          className="page-side-edge is-left"
-          src={`/figma-exports/page-edges/${page.key}-left.jpg?v=4`}
-          alt=""
-          draggable={false}
-          style={{
-            top: contentOffset * scale,
-            height: page.height * scale,
-          }}
-        />
-        <img
-          className="page-side-edge is-right"
-          src={`/figma-exports/page-edges/${page.key}-right.jpg?v=4`}
-          alt=""
-          draggable={false}
-          style={{
-            top: contentOffset * scale,
-            height: page.height * scale,
-          }}
-        />
-      </div>
       <div className="page-image-clip" style={{ height: contentBottom * scale }}>
         {usesCustomContent ? (
           <AboutPage1 scale={scale} onNavigate={onNavigate} />
@@ -1038,28 +1009,6 @@ function FigmaPage({
             style={contentOffset ? { marginTop: contentOffset * scale } : undefined}
           />
         )}
-      </div>
-      <div
-        className="footer-side-extension"
-        aria-hidden="true"
-        style={{
-          "--side-canvas-width": `${sharedFooter.width * scale}px`,
-          top: contentBottom * scale,
-          height: sharedFooter.height * scale,
-        } as CSSProperties}
-      >
-        <img
-          className="page-side-edge is-left"
-          src="/figma-exports/page-edges/footer-left.jpg?v=3"
-          alt=""
-          draggable={false}
-        />
-        <img
-          className="page-side-edge is-right"
-          src="/figma-exports/page-edges/footer-right.jpg?v=3"
-          alt=""
-          draggable={false}
-        />
       </div>
       <img
         id="contact-footer"
@@ -2003,7 +1952,6 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
       className="hero-mood"
       aria-label="Cafe day, sunset and night views"
       style={{
-        "--hero-canvas-width": `${heroMoodSwitcher.width * scale}px`,
         left: "50%",
         top: heroMoodSwitcher.top * scale,
         width: "100vw",
@@ -2011,12 +1959,6 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
         transform: "translateX(-50%)",
       } as CSSProperties}
     >
-      {!showMoodPhoto && (
-        <>
-          <span className="hero-mood-side-fill is-left" aria-hidden="true" />
-          <span className="hero-mood-side-fill is-right" aria-hidden="true" />
-        </>
-      )}
       {showMoodPhoto && (
         <>
           <img

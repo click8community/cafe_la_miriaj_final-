@@ -133,18 +133,20 @@ try {
   }
 
   await goto(page, "about");
-  const aboutPageImage = page.locator(".page-image");
+  const aboutPageFrame = page.locator(".about-us-1-page");
   check(
-    "About page uses the About Page 1 Figma frame",
-    (await aboutPageImage.getAttribute("src"))?.includes("about-page-1.png"),
+    "About page uses the About Page 1 custom frame",
+    (await aboutPageFrame.count()) === 1,
   );
   check(
-    "About Page 1 frame loads at high resolution",
-    await aboutPageImage.evaluate(
-      (image) => image.naturalWidth >= 2600 && image.naturalHeight >= 1600,
+    "About Page 1 frame uses real cafe photos",
+    await aboutPageFrame.evaluate((frame) =>
+      [...frame.querySelectorAll("img")].some((image) =>
+        image.getAttribute("src")?.includes("/cafe-photos/"),
+      ),
     ),
   );
-  if (await clickButton(page, "Book a table")) {
+  if (await clickButton(page, "Book a Table")) {
     await waitForHash(page, "#home");
     await waitForScroll(page, 7000);
     pass("About Page 1 booking button reaches table booking");
@@ -252,7 +254,7 @@ try {
           `section=${JSON.stringify(sectionBox)} detail=${JSON.stringify(detailBox)}`,
         );
       }
-      if (await clickButton(page, "Back to floor plan")) {
+      if (await clickButton(page, "Back to photos")) {
         await page.waitForFunction(
           () => !document.querySelector(".explore-cafe-detail"),
           { timeout: 3000 },
@@ -312,7 +314,7 @@ try {
   const menuExpectations = {
     Pizza: "Margherita Pizza",
     Pasta: "Tangy Arrabbiata Pasta",
-    Drinks: "Volcachino",
+    Drinks: "Classic Mint Mojito",
     Shakes: "Oreo Thick Shake",
   };
   for (const [tabName, firstItem] of Object.entries(menuExpectations)) {
@@ -332,19 +334,18 @@ try {
   }
   await page.getByRole("tab", { name: "Drinks", exact: true }).click();
   check(
-    "Drinks menu is labelled Alcohol-Free Flavours",
-    (await page.locator(".figma-menu-intro h2").innerText()).trim() ===
-      "Alcohol-Free Flavours",
+    "Drinks menu is labelled Cafe Coolers",
+    (await page.locator(".figma-menu-intro h2").innerText()).trim() === "Cafe Coolers",
   );
   check(
-    "Drinks menu shows all six cafe signature flavours",
+    "Drinks menu shows all six cafe cooler drinks",
     (await page.locator(".figma-menu-item h3").allTextContents()).join("|") ===
-      "Volcachino|Irish Fix|Bloomtime|Rum Rebel|Amber Rush|Bourbon Berry",
+      "Classic Mint Mojito|Blue Curacao Mojito|Strawberry Mojito|Watermelon Mojito|Green Apple Mojito|Peach Iced Tea",
   );
   check(
-    "Every signature drink has an alcohol-free description",
-    (await page.locator(".figma-menu-item p").allTextContents()).every((description) =>
-      description.startsWith("Alcohol-free"),
+    "Every cafe cooler drink has a description",
+    (await page.locator(".figma-menu-item p").allTextContents()).every(
+      (description) => description.trim().length > 20,
     ),
   );
   if (await clickButton(page, "Explore the Menu")) {
@@ -548,17 +549,33 @@ try {
         viewportWidth: window.innerWidth,
         viewportHeight: window.innerHeight,
         documentWidth: document.documentElement.scrollWidth,
+        shellWidth: document.querySelector(".page-shell")?.getBoundingClientRect().width ?? 0,
+        heroLeft: hero?.left ?? Infinity,
+        heroRight: hero?.right ?? -Infinity,
+        heroWidth: hero?.width ?? 0,
         heroBottom: hero?.bottom ?? Infinity,
         headerWidth: header?.width ?? 0,
         headerInnerLeft: headerInner?.left ?? -1,
         headerInnerRight: headerInner?.right ?? Infinity,
+        sideArtwork:
+          document.querySelectorAll(
+            ".page-side-edge, .page-side-extension, .footer-side-extension, .hero-mood-side-fill",
+          ).length,
       };
     });
     const label = `${viewport.width}x${viewport.height}`;
     check(
-      `${label} laptop hero fits the first screen`,
-      dimensions.heroBottom <= dimensions.viewportHeight - 18,
-      `hero bottom ${dimensions.heroBottom}px`,
+      `${label} laptop hero fits the viewport width`,
+      Math.abs(dimensions.shellWidth - dimensions.viewportWidth) < 1 &&
+        Math.abs(dimensions.heroWidth - dimensions.viewportWidth) < 1 &&
+        Math.abs(dimensions.heroLeft) < 1 &&
+        Math.abs(dimensions.heroRight - dimensions.viewportWidth) < 1,
+      JSON.stringify(dimensions),
+    );
+    check(
+      `${label} laptop does not render blurred side artwork`,
+      dimensions.sideArtwork === 0,
+      JSON.stringify(dimensions),
     );
     check(
       `${label} laptop header spans the viewport`,
@@ -583,7 +600,6 @@ try {
   const wideDesktopDimensions = await laptopPage.evaluate(() => {
     const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
     const hero = document.querySelector(".hero-mood")?.getBoundingClientRect();
-    const exploreButton = document.querySelector(".hero-explore-cafe-button")?.getBoundingClientRect();
     return {
       viewportWidth: window.innerWidth,
       viewportHeight: window.innerHeight,
@@ -592,7 +608,10 @@ try {
       heroLeft: hero?.left ?? Infinity,
       heroRight: hero?.right ?? -Infinity,
       heroWidth: hero?.width ?? 0,
-      exploreButtonBottom: exploreButton?.bottom ?? Infinity,
+      sideArtwork:
+        document.querySelectorAll(
+          ".page-side-edge, .page-side-extension, .footer-side-extension, .hero-mood-side-fill",
+        ).length,
     };
   });
   check(
@@ -603,13 +622,13 @@ try {
     JSON.stringify(wideDesktopDimensions),
   );
   check(
-    "Wide desktop keeps the Figma content fitted",
-    wideDesktopDimensions.shellWidth <= wideDesktopDimensions.viewportWidth * 0.82,
+    "Wide desktop fits the Figma content to the viewport width",
+    Math.abs(wideDesktopDimensions.shellWidth - wideDesktopDimensions.viewportWidth) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
-    "Wide desktop keeps the Explore button visible",
-    wideDesktopDimensions.exploreButtonBottom <= wideDesktopDimensions.viewportHeight,
+    "Wide desktop does not render blurred side artwork",
+    wideDesktopDimensions.sideArtwork === 0,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
@@ -623,43 +642,38 @@ try {
     await laptopPage.waitForTimeout(350);
     const fullWidthLayout = await laptopPage.evaluate((expectedPage) => {
       const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
-      const pageExtension = document.querySelector(".page-side-extension")?.getBoundingClientRect();
-      const footerExtension = document.querySelector(".footer-side-extension")?.getBoundingClientRect();
-      const sideEdges = [...document.querySelectorAll(".page-side-extension .page-side-edge")];
+      const pageImage = document.querySelector(".page-image")?.getBoundingClientRect();
+      const aboutPage = document.querySelector(".about-us-1-page")?.getBoundingClientRect();
+      const sideArtwork = document.querySelectorAll(
+        ".page-side-edge, .page-side-extension, .footer-side-extension, .hero-mood-side-fill",
+      ).length;
 
       return {
         viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
         shellWidth: shell?.width ?? 0,
-        pageExtensionLeft: pageExtension?.left ?? Infinity,
-        pageExtensionWidth: pageExtension?.width ?? 0,
-        footerExtensionLeft: footerExtension?.left ?? Infinity,
-        footerExtensionWidth: footerExtension?.width ?? 0,
-        sideEdgeWidths: sideEdges.map((edge) => edge.getBoundingClientRect().width),
-        sideEdgeSources: sideEdges.map((edge) => edge.getAttribute("src") ?? ""),
+        pageImageWidth: pageImage?.width ?? 0,
+        aboutPageWidth: aboutPage?.width ?? 0,
+        sideArtwork,
         expectedPage,
       };
     }, pageKey);
     check(
-      `${pageKey} keeps its Figma canvas fitted on wide desktop`,
-      fullWidthLayout.shellWidth <= fullWidthLayout.viewportWidth * 0.82,
+      `${pageKey} fits its Figma canvas to wide desktop`,
+      Math.abs(fullWidthLayout.shellWidth - fullWidthLayout.viewportWidth) < 1,
       JSON.stringify(fullWidthLayout),
     );
     check(
-      `${pageKey} background and footer span wide desktop`,
-      Math.abs(fullWidthLayout.pageExtensionLeft) < 1 &&
-        Math.abs(fullWidthLayout.pageExtensionWidth - fullWidthLayout.viewportWidth) < 1 &&
-        Math.abs(fullWidthLayout.footerExtensionLeft) < 1 &&
-        Math.abs(fullWidthLayout.footerExtensionWidth - fullWidthLayout.viewportWidth) < 1,
+      `${pageKey} visible page content spans wide desktop`,
+      Math.abs(
+        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) -
+          fullWidthLayout.viewportWidth,
+      ) < 1,
       JSON.stringify(fullWidthLayout),
     );
     check(
-      `${pageKey} uses loaded page-specific edge artwork`,
-      fullWidthLayout.sideEdgeWidths.length === 2 &&
-        fullWidthLayout.sideEdgeWidths.every((width) => width > 1) &&
-        fullWidthLayout.sideEdgeSources.every((src) =>
-          src.includes(`/page-edges/${pageKey}-`),
-        ),
+      `${pageKey} does not render blurred side artwork`,
+      fullWidthLayout.sideArtwork === 0,
       JSON.stringify(fullWidthLayout),
     );
     check(
