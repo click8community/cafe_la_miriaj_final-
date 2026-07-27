@@ -10,22 +10,43 @@
   -webkit-font-smoothing: antialiased;
 }
 
-* {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
+  max-width: 100%;
+  overflow-x: hidden;
   scroll-behavior: smooth;
 }
 
 body {
   margin: 0;
+  max-width: 100%;
   min-width: 320px;
+  overflow-x: hidden;
   background: #f9edd1;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
 }
 
 button {
   font: inherit;
+}
+
+.container,
+main,
+.site-frame,
+.page-shell,
+.page-image-clip {
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .site-frame {
