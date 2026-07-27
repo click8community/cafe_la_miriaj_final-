@@ -76,6 +76,8 @@ type ExploreCafeZone = {
   name: string;
   description: string;
   action: HotspotAction;
+  photo: string;
+  photoPosition?: string;
   x: number;
   y: number;
   width: number;
@@ -94,10 +96,10 @@ const pages: Record<PageKey, PageSpec> = {
   about: {
     key: "about",
     label: "About",
-    src: "/figma-exports/about-page-1.png?v=1",
+    src: "",
     width: 1728,
-    height: 1080,
-    contentHeight: 1080,
+    height: 3209,
+    contentHeight: 3209,
   },
   menu: {
     key: "menu",
@@ -105,7 +107,7 @@ const pages: Record<PageKey, PageSpec> = {
     src: "/figma-exports/menu-page.png?v=2",
     width: 1728,
     height: 3858,
-    contentHeight: 2760,
+    contentHeight: 3650,
   },
   events: {
     key: "events",
@@ -152,16 +154,14 @@ const emailHref = "mailto:hello@cafelamirajh.com";
 
 const pageHotspots: Partial<Record<PageKey, Hotspot[]>> = {
   home: [
-    { label: "Discover The Experience", action: "exploreCafe", x: 72, y: 1390, width: 280, height: 48 },
-    { label: "Explore Cafe Specials", action: "menuList", x: 72, y: 1772, width: 245, height: 62 },
+    { label: "Discover The Experience", action: "exploreCafe", x: 78, y: 2028, width: 330, height: 60 },
+    { label: "Explore Cafe Specials", action: "menuList", x: 68, y: 3164, width: 350, height: 82 },
     { label: "More about Mirajh", action: "about", x: 1110, y: 8610, width: 265, height: 62 },
     { label: "Check our Instagram", action: "instagram", x: 608, y: 9038, width: 420, height: 86 },
     { label: "Reserve your spot", action: "eventPhone", x: 1058, y: 9054, width: 235, height: 94 },
     { label: "See full event calendar", action: "events", x: 1322, y: 9058, width: 330, height: 82 },
   ],
-  about: [
-    { label: "Book a table", action: "reserve", x: 766, y: 732, width: 196, height: 58 },
-  ],
+  about: [],
   menu: [
     { label: "View kiosk menu", action: "menuList", x: 934, y: 2650, width: 410, height: 90 },
   ],
@@ -289,6 +289,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Your journey above the city begins here. A grand welcome setting the tone for the evening ahead.",
     action: "placeEntrance",
+    photo: "/cafe-photos/photo-14.jpg",
+    photoPosition: "center center",
     x: 910,
     y: 340,
     width: 250,
@@ -300,6 +302,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Productivity with a panoramic view. High-speed WiFi and comfortable seating above the noise.",
     action: "placeWorkspace",
+    photo: "/cafe-photos/photo-03.jpg",
+    photoPosition: "center center",
     x: 800,
     y: 548,
     width: 110,
@@ -311,6 +315,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Comfortable Skyone booth seating for coffee, conversations and long evenings with a rooftop view.",
     action: "reserve",
+    photo: "/cafe-photos/photo-15.jpg",
+    photoPosition: "center center",
     x: 548,
     y: 338,
     width: 370,
@@ -322,6 +328,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Movie nights, match screenings and live events under the sky. Settle in for the big screen experience.",
     action: "placeProjector",
+    photo: "/cafe-photos/photo-04.jpg",
+    photoPosition: "center center",
     x: 304,
     y: 320,
     width: 220,
@@ -333,6 +341,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Craft brews, fresh juices and signature drinks, ready when you are. Walk up and order your favorite.",
     action: "placeKiosk",
+    photo: "/cafe-photos/photo-05.jpg",
+    photoPosition: "center center",
     x: 294,
     y: 808,
     width: 360,
@@ -344,6 +354,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Front-row rooftop seating for golden-hour views, relaxed conversations and coffee as the city turns to evening.",
     action: "reserve",
+    photo: "/cafe-photos/photo-02.jpg",
+    photoPosition: "center center",
     x: 660,
     y: 820,
     width: 270,
@@ -355,6 +367,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Relaxed sofa seating for coffee, conversation and unhurried evenings above the city.",
     action: "reserve",
+    photo: "/cafe-photos/photo-15.jpg",
+    photoPosition: "center center",
     x: 1170,
     y: 350,
     width: 278,
@@ -366,6 +380,8 @@ const exploreCafeZones: ExploreCafeZone[] = [
     description:
       "Sharpen your cue and challenge a friend. Premium tables in a relaxed, intimate atmosphere.",
     action: "placeSnooker",
+    photo: "/cafe-photos/photo-10.jpg",
+    photoPosition: "center center",
     x: 1138,
     y: 754,
     width: 276,
@@ -454,6 +470,78 @@ const figmaMenuSection = {
   height: 1410,
 };
 
+const signatureCafeDrinks = [
+  {
+    name: "Classic Mint Mojito",
+    price: "₹149",
+    description: "Mint, lemon, and soda built as a bright rooftop refresher.",
+  },
+  {
+    name: "Blue Curacao Mojito",
+    price: "₹189",
+    description: "A vivid blue cooler with citrus sparkle and a clean fizzy finish.",
+  },
+  {
+    name: "Strawberry Mojito",
+    price: "₹199",
+    description: "Fresh strawberry notes with mint, lime, and soda over ice.",
+  },
+  {
+    name: "Watermelon Mojito",
+    price: "₹189",
+    description: "Watermelon brightness with cool mint and a sparkling lift.",
+  },
+  {
+    name: "Green Apple Mojito",
+    price: "₹189",
+    description: "Crisp green apple with mint and sparkling citrus lift.",
+  },
+  {
+    name: "Peach Iced Tea",
+    price: "₹149",
+    description: "Chilled tea with soft peach sweetness and a clean finish.",
+  },
+] as const;
+
+const spiritFreeSignatureDrinks = [
+  {
+    name: "Amber Rush",
+    price: "Rum-Inspired",
+    description:
+      "A bold blend of dark cola, citrus, and warm molasses notes with a velvety smooth finish.",
+  },
+  {
+    name: "Bourbon Berry",
+    price: "Bourbon Whiskey-Inspired",
+    description:
+      "Rich berry sweetness meets subtle oak, vanilla, and caramel for a deep, comforting sip.",
+  },
+  {
+    name: "Vokachino",
+    price: "Vodka-Inspired",
+    description:
+      "A crisp and refreshing fusion of citrus, ginger, and clean botanicals with a smooth finish.",
+  },
+  {
+    name: "Irish Fix",
+    price: "Irish Whiskey-Inspired",
+    description:
+      "Creamy vanilla, toasted malt, and gentle spice come together in a silky, warming experience.",
+  },
+  {
+    name: "Bloomtine",
+    price: "Wine-Inspired",
+    description:
+      "A vibrant medley of ripe berries, floral notes, and a hint of spice with a refined finish.",
+  },
+  {
+    name: "Rum Rebel",
+    price: "Dark Rum-Inspired",
+    description:
+      "Layers of caramel, warm spices, and orange zest create a rich, full-bodied flavour without the buzz.",
+  },
+] as const;
+
 const figmaMenuCategories = [
   {
     key: "pizza",
@@ -502,44 +590,7 @@ const figmaMenuCategories = [
   {
     key: "drinks",
     label: "Drinks",
-    items: [
-      {
-        name: "Volcachino",
-        price: "₹319",
-        description:
-          "Alcohol-free coffee cooler with roasted coffee, cocoa and smooth vanilla notes.",
-      },
-      {
-        name: "Irish Fix",
-        price: "₹329",
-        description:
-          "Alcohol-free Irish-cream-inspired flavour with creamy coffee, vanilla and brown-sugar notes.",
-      },
-      {
-        name: "Bloomtime",
-        price: "₹339",
-        description:
-          "Alcohol-free floral cooler with bright citrus, berry and delicate blossom notes.",
-      },
-      {
-        name: "Rum Rebel",
-        price: "₹349",
-        description:
-          "Alcohol-free rum-inspired flavour with caramel, vanilla, citrus and warm-spice notes.",
-      },
-      {
-        name: "Amber Rush",
-        price: "₹359",
-        description:
-          "Alcohol-free amber fruit cooler with orange, apple and soft caramel notes.",
-      },
-      {
-        name: "Bourbon Berry",
-        price: "₹369",
-        description:
-          "Alcohol-free bourbon-inspired berry cooler with mixed berries, vanilla, caramel and oak-like notes.",
-      },
-    ],
+    items: signatureCafeDrinks,
   },
   {
     key: "shakes",
@@ -565,9 +616,16 @@ const figmaMenuCategories = [
   },
 ] as const;
 
-const kioskMenuFeature = {
+const signatureDrinksSection = {
   x: 0,
   y: 2160,
+  width: 1728,
+  height: 792,
+};
+
+const kioskMenuFeature = {
+  x: 0,
+  y: 2952,
   width: 1728,
   height: 698,
   image: "/cafe-photos/photo-05.jpg",
@@ -730,7 +788,6 @@ const sharedFooterPhone = {
 };
 
 function getContentOffset(pageKey: PageKey) {
-  if (pageKey === "about") return siteHeaderLayout.height;
   return pageKey === "places" ? sharedHeader.height : 0;
 }
 
@@ -800,7 +857,11 @@ export function App() {
     }
 
     if (action === "contact") {
-      openPageAt(activePage, getFooterTop(activePage), "Contact footer opened");
+      openPageAt(
+        activePage,
+        getFooterTop(activePage),
+        "Contact footer opened",
+      );
       return;
     }
 
@@ -899,24 +960,26 @@ function FigmaPage({
   const [scale, setScale] = useState(1);
   const contentOffset = getContentOffset(page.key);
   const contentBottom = contentOffset + page.contentHeight;
+  const usesCustomContent = page.key === "about";
 
   useEffect(() => {
-    const image = imageRef.current;
-    if (!image) return;
+    const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
+    if (!scaleNode) return;
 
-    const updateScale = () => setScale(image.clientWidth / page.width);
+    const updateScale = () => setScale(scaleNode.clientWidth / page.width);
     updateScale();
 
     const observer = new ResizeObserver(updateScale);
-    observer.observe(image);
+    observer.observe(scaleNode);
     return () => observer.disconnect();
-  }, [page.width]);
+  }, [page.key, page.width]);
 
   useEffect(() => {
     const target = pendingScroll.current;
 
     requestAnimationFrame(() => {
-      const imageScale = imageRef.current ? imageRef.current.clientWidth / page.width : 1;
+      const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
+      const imageScale = scaleNode ? scaleNode.clientWidth / page.width : 1;
       window.scrollTo({
         top: (target ?? 0) * imageScale,
         left: 0,
@@ -931,16 +994,71 @@ function FigmaPage({
 
   return (
     <div ref={shellRef} className="page-shell">
-      <div className="page-image-clip" style={{ height: contentBottom * scale }}>
+      <div
+        className="page-side-extension"
+        aria-hidden="true"
+        style={{
+          "--side-canvas-width": `${page.width * scale}px`,
+          height: contentBottom * scale,
+        } as CSSProperties}
+      >
         <img
-          ref={imageRef}
-          className="page-image"
-          src={page.src}
-          alt={`${page.label} page exported exactly from the Figma file`}
-          width={page.width}
-          height={page.height}
+          className="page-side-edge is-left"
+          src={`/figma-exports/page-edges/${page.key}-left.jpg?v=4`}
+          alt=""
           draggable={false}
-          style={contentOffset ? { marginTop: contentOffset * scale } : undefined}
+          style={{
+            top: contentOffset * scale,
+            height: page.height * scale,
+          }}
+        />
+        <img
+          className="page-side-edge is-right"
+          src={`/figma-exports/page-edges/${page.key}-right.jpg?v=4`}
+          alt=""
+          draggable={false}
+          style={{
+            top: contentOffset * scale,
+            height: page.height * scale,
+          }}
+        />
+      </div>
+      <div className="page-image-clip" style={{ height: contentBottom * scale }}>
+        {usesCustomContent ? (
+          <AboutPage1 scale={scale} onNavigate={onNavigate} />
+        ) : (
+          <img
+            ref={imageRef}
+            className="page-image"
+            src={page.src}
+            alt={`${page.label} page exported exactly from the Figma file`}
+            width={page.width}
+            height={page.height}
+            draggable={false}
+            style={contentOffset ? { marginTop: contentOffset * scale } : undefined}
+          />
+        )}
+      </div>
+      <div
+        className="footer-side-extension"
+        aria-hidden="true"
+        style={{
+          "--side-canvas-width": `${sharedFooter.width * scale}px`,
+          top: contentBottom * scale,
+          height: sharedFooter.height * scale,
+        } as CSSProperties}
+      >
+        <img
+          className="page-side-edge is-left"
+          src="/figma-exports/page-edges/footer-left.jpg?v=3"
+          alt=""
+          draggable={false}
+        />
+        <img
+          className="page-side-edge is-right"
+          src="/figma-exports/page-edges/footer-right.jpg?v=3"
+          alt=""
+          draggable={false}
         />
       </div>
       <img
@@ -1000,6 +1118,7 @@ function FigmaPage({
       {page.key === "events" && <CurrentEventsTimeline scale={scale} onNavigate={onNavigate} />}
       {page.key === "gallery" && <InstagramStorySection scale={scale} />}
       {page.key === "menu" && <FigmaMenuSection scale={scale} />}
+      {page.key === "menu" && <SignatureDrinksSection scale={scale} />}
       {page.key === "menu" && <KioskMenuFeature scale={scale} onNavigate={onNavigate} />}
       {page.key === "home" && <HomeGalleryCarousel scale={scale} />}
       {page.key === "home" && <HomeEventsDivider scale={scale} />}
@@ -1044,6 +1163,169 @@ function FigmaPage({
 
 type FigmaMenuCategoryKey = (typeof figmaMenuCategories)[number]["key"];
 
+function AboutPage1({
+  scale,
+  onNavigate,
+}: {
+  scale: number;
+  onNavigate: (action: Hotspot["action"]) => void;
+}) {
+  return (
+    <article
+      className="about-us-1-page"
+      aria-label="About Page 1"
+      data-node-id="3740:1453"
+      style={{ transform: `scale(${scale})` }}
+    >
+      <section className="about-us-1-hero" data-node-id="3740:1464">
+        <img src="/cafe-photos/photo-03.jpg" alt="" aria-hidden="true" draggable={false} />
+        <span className="about-us-1-hero-shade" aria-hidden="true" />
+        <div className="about-us-1-hero-copy">
+          <p>Chennai’s Tallest Rooftop Cafe</p>
+          <h1>
+            <span>Above the</span>
+            <em>City</em>
+          </h1>
+          <small>Established 2025 · 5th Floor · Anna Nagar</small>
+          <button type="button" onClick={() => onNavigate("reserve")}>
+            Book a Table
+          </button>
+        </div>
+      </section>
+
+      <section className="about-us-1-welcome" data-node-id="3740:1474">
+        <div className="about-us-1-welcome-copy">
+          <div>
+            <p className="about-us-1-kicker">Experience</p>
+            <h2>
+              Where the City Meets the <em>Sky</em>
+            </h2>
+          </div>
+          <div className="about-us-1-body-copy">
+            <p>
+              Perched atop the tallest architectural marvel in Anna Nagar, Aura is more than a café; it is a sanctuary above the pulse of the city. We invite you to leave the noise behind and embrace a 270° perspective that only heights can offer.
+            </p>
+            <p>
+              From our meticulously sourced specialty coffees to a culinary menu designed for the discerning palate, every detail is crafted to elevate your senses.
+            </p>
+          </div>
+          <button type="button" onClick={() => onNavigate("about")}>
+            Our Story
+          </button>
+        </div>
+        <img
+          className="about-us-1-arch-photo"
+          src="/cafe-photos/photo-14.jpg"
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+        />
+      </section>
+
+      <section className="about-us-1-experience" data-node-id="3740:1484">
+        <div className="about-us-1-section-heading">
+          <p>The Experience</p>
+          <h2>Life looks different from up here</h2>
+        </div>
+        <div className="about-us-1-card-row">
+          <AboutPage1Card
+            image="/cafe-photos/photo-05.jpg"
+            title="Coffee"
+            copy="Rare single-origin beans roasted in-house and brewed with scientific precision for the ultimate cup."
+          />
+          <AboutPage1Card
+            image="/cafe-photos/photo-04.jpg"
+            title="Community"
+            copy="Bringing people together—neighbors, friends, and strangers—around shared tables and warm moments."
+          />
+          <AboutPage1Card
+            image="/cafe-photos/photo-15.jpg"
+            title="Convo"
+            copy="Great conversations happen here—easy, honest, and often sparked by a fresh cup and a comfortable seat."
+          />
+        </div>
+      </section>
+
+      <section className="about-us-1-cta" data-node-id="3740:1507">
+        <div>
+          <h2>
+            Reserve your table in the <em>Sky</em>
+          </h2>
+          <p>Open Daily: 10:00 AM — 11:00 PM · Reservations: +91 98765 43210</p>
+        </div>
+        <button type="button" onClick={() => onNavigate("reserve")}>
+          Make a Reservation
+        </button>
+      </section>
+
+      <footer className="about-us-1-footer" data-node-id="3740:1513">
+        <div className="about-us-1-footer-copy">
+          <div>
+            <h2>Aura</h2>
+            <p>
+              A premier rooftop escape where every moment is elevated. Experience the height of Chennai’s social landscape.
+            </p>
+          </div>
+          <div className="about-us-1-footer-links">
+            <div>
+              <h3>Location</h3>
+              <p>
+                42nd Floor, Grand Skyline Towers,
+                <br />
+                Anna Nagar, Chennai, 600040
+              </p>
+            </div>
+            <div>
+              <h3>Follow Us</h3>
+              <span>
+                <button type="button" onClick={() => onNavigate("instagram")}>
+                  Instagram
+                </button>
+                <button type="button" onClick={() => onNavigate("facebook")}>
+                  Facebook
+                </button>
+                <button type="button" onClick={() => onNavigate("twitter")}>
+                  X
+                </button>
+              </span>
+            </div>
+          </div>
+          <p className="about-us-1-copyright">© 2025 Aura Rooftop Cafe. All rights reserved.</p>
+        </div>
+        <button className="about-us-1-map" type="button" onClick={() => onNavigate("map")}>
+          <img src="/figma-exports/about-us-1/map.png" alt="" aria-hidden="true" draggable={false} />
+          <span>
+            <i>
+              <img src="/figma-exports/about-us-1/map-pin.svg" alt="" aria-hidden="true" draggable={false} />
+            </i>
+            <b>Aura</b>
+          </span>
+        </button>
+      </footer>
+    </article>
+  );
+}
+
+function AboutPage1Card({
+  image,
+  title,
+  copy,
+}: {
+  image: string;
+  title: string;
+  copy: string;
+}) {
+  return (
+    <article className="about-us-1-card">
+      <img src={image} alt="" aria-hidden="true" draggable={false} />
+      <div>
+        <h3>{title}</h3>
+        <p>{copy}</p>
+      </div>
+    </article>
+  );
+}
+
 function FigmaMenuSection({ scale }: { scale: number }) {
   const [activeCategoryKey, setActiveCategoryKey] =
     useState<FigmaMenuCategoryKey>("pizza");
@@ -1085,8 +1367,8 @@ function FigmaMenuSection({ scale }: { scale: number }) {
 
       {activeCategory.key === "drinks" && (
         <div className="figma-menu-intro">
-          <p>Signature Collection</p>
-          <h2>Alcohol-Free Flavours</h2>
+          <p>Menu Beverages</p>
+          <h2>Cafe Coolers</h2>
         </div>
       )}
 
@@ -1106,6 +1388,37 @@ function FigmaMenuSection({ scale }: { scale: number }) {
               <strong>{item.price}</strong>
             </div>
             {"description" in item && <p>{item.description}</p>}
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SignatureDrinksSection({ scale }: { scale: number }) {
+  return (
+    <section
+      className="signature-drinks-section"
+      aria-label="Alcohol-free flavors"
+      style={{
+        left: signatureDrinksSection.x * scale,
+        top: signatureDrinksSection.y * scale,
+        width: signatureDrinksSection.width,
+        height: signatureDrinksSection.height,
+        transform: `scale(${scale})`,
+      }}
+    >
+      <div className="signature-drinks-heading">
+        <p>Spirit-Free Signatures</p>
+        <h2>Alcohol-Free Flavors</h2>
+        <span>Crafted with spirit-inspired essences - no ABV, all character.</span>
+      </div>
+      <div className="signature-drinks-grid">
+        {spiritFreeSignatureDrinks.map((drink) => (
+          <article className="signature-drink-card" key={drink.name}>
+            <h3>{drink.name}</h3>
+            <strong>{drink.price}</strong>
+            <p>{drink.description}</p>
           </article>
         ))}
       </div>
@@ -1283,9 +1596,6 @@ function ExploreCafeExperience({
   const transitionTimeout = useRef<number | null>(null);
   const activeZone = exploreCafeZones.find((zone) => zone.id === activeZoneId) ?? null;
   const detailZone = exploreCafeZones.find((zone) => zone.id === detailZoneId) ?? null;
-  const detailMediaWidth = 1008;
-  const detailMediaHeight = exploreCafeExperience.height;
-  const detailZoom = 2;
 
   useEffect(() => {
     return () => {
@@ -1404,7 +1714,7 @@ function ExploreCafeExperience({
                 className="explore-cafe-detail-back"
                 onClick={() => setDetailZoneId(null)}
               >
-                Back to floor plan
+                Back to photos
               </button>
               <button
                 type="button"
@@ -1418,18 +1728,16 @@ function ExploreCafeExperience({
           <div
             className="explore-cafe-detail-media"
             role="img"
-            aria-label={`${detailZone.name} location in the Cafe La Mirajh floor plan`}
-            style={{
-              backgroundPosition: `${
-                detailMediaWidth / 2 -
-                (detailZone.x + detailZone.width / 2) * detailZoom
-              }px ${
-                detailMediaHeight / 2 -
-                (exploreCafeExperience.top + detailZone.y + detailZone.height / 2) *
-                  detailZoom
-              }px`,
-            }}
-          />
+            aria-label={`${detailZone.name} photo at Cafe La Mirajh`}
+          >
+            <img
+              src={detailZone.photo}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              style={{ objectPosition: detailZone.photoPosition ?? "center" }}
+            />
+          </div>
         </article>
       )}
 

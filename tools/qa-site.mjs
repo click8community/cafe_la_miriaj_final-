@@ -617,6 +617,57 @@ try {
     wideDesktopDimensions.documentWidth <= wideDesktopDimensions.viewportWidth,
     JSON.stringify(wideDesktopDimensions),
   );
+
+  for (const pageKey of pageKeys) {
+    await laptopPage.goto(`${baseUrl}/#${pageKey}`, { waitUntil: "networkidle" });
+    await laptopPage.waitForTimeout(350);
+    const fullWidthLayout = await laptopPage.evaluate((expectedPage) => {
+      const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
+      const pageExtension = document.querySelector(".page-side-extension")?.getBoundingClientRect();
+      const footerExtension = document.querySelector(".footer-side-extension")?.getBoundingClientRect();
+      const sideEdges = [...document.querySelectorAll(".page-side-extension .page-side-edge")];
+
+      return {
+        viewportWidth: window.innerWidth,
+        documentWidth: document.documentElement.scrollWidth,
+        shellWidth: shell?.width ?? 0,
+        pageExtensionLeft: pageExtension?.left ?? Infinity,
+        pageExtensionWidth: pageExtension?.width ?? 0,
+        footerExtensionLeft: footerExtension?.left ?? Infinity,
+        footerExtensionWidth: footerExtension?.width ?? 0,
+        sideEdgeWidths: sideEdges.map((edge) => edge.getBoundingClientRect().width),
+        sideEdgeSources: sideEdges.map((edge) => edge.getAttribute("src") ?? ""),
+        expectedPage,
+      };
+    }, pageKey);
+    check(
+      `${pageKey} keeps its Figma canvas fitted on wide desktop`,
+      fullWidthLayout.shellWidth <= fullWidthLayout.viewportWidth * 0.82,
+      JSON.stringify(fullWidthLayout),
+    );
+    check(
+      `${pageKey} background and footer span wide desktop`,
+      Math.abs(fullWidthLayout.pageExtensionLeft) < 1 &&
+        Math.abs(fullWidthLayout.pageExtensionWidth - fullWidthLayout.viewportWidth) < 1 &&
+        Math.abs(fullWidthLayout.footerExtensionLeft) < 1 &&
+        Math.abs(fullWidthLayout.footerExtensionWidth - fullWidthLayout.viewportWidth) < 1,
+      JSON.stringify(fullWidthLayout),
+    );
+    check(
+      `${pageKey} uses loaded page-specific edge artwork`,
+      fullWidthLayout.sideEdgeWidths.length === 2 &&
+        fullWidthLayout.sideEdgeWidths.every((width) => width > 1) &&
+        fullWidthLayout.sideEdgeSources.every((src) =>
+          src.includes(`/page-edges/${pageKey}-`),
+        ),
+      JSON.stringify(fullWidthLayout),
+    );
+    check(
+      `${pageKey} wide layout has no horizontal overflow`,
+      fullWidthLayout.documentWidth <= fullWidthLayout.viewportWidth,
+      JSON.stringify(fullWidthLayout),
+    );
+  }
   await laptopContext.close();
 
   const mobileContext = await browser.newContext({
