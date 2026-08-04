@@ -720,6 +720,7 @@ const bookingSpots = [
     detail: "High-speed WiFi",
     image: "/figma-exports/experience-work-photo.png",
     tags: ["High-speed WiFi", "Power outlets"],
+    popular: false,
   },
   {
     id: "gaming",
