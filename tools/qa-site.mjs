@@ -5,17 +5,6 @@ const pageKeys = ["home", "about", "menu", "events", "gallery", "places"];
 // Width of the Figma canvas. Pages scale down to fit narrower viewports but are
 // never scaled past 1:1, so on a wider screen the canvas stays this wide and centres.
 const designWidth = 1728;
-// Header + hero of the design. On short viewports the canvas narrows so this
-// fold stays on screen, but never below minCanvasRatio of the viewport width.
-const designFoldHeight = 1116;
-const minCanvasRatio = 0.84;
-
-// Mirrors the max-width expression on .page-shell in styles.css.
-function expectedCanvasWidth(viewportWidth, viewportHeight) {
-  const heightFit = (viewportHeight * designWidth) / designFoldHeight;
-  const floor = viewportWidth * minCanvasRatio;
-  return Math.min(viewportWidth, designWidth, Math.max(heightFit, floor));
-}
 const failures = [];
 const passes = [];
 
@@ -578,18 +567,13 @@ try {
       };
     });
     const label = `${viewport.width}x${viewport.height}`;
-    const expected = expectedCanvasWidth(dimensions.viewportWidth, dimensions.viewportHeight);
     check(
-      `${label} laptop canvas fits the fold and stays centred`,
-      Math.abs(dimensions.shellWidth - expected) < 1 &&
-        Math.abs(dimensions.heroWidth - expected) < 1 &&
-        Math.abs(dimensions.heroLeft - (dimensions.viewportWidth - expected) / 2) < 1,
-      `expected ${Math.round(expected)}px; ${JSON.stringify(dimensions)}`,
-    );
-    check(
-      `${label} laptop gutters stay within 8% per side`,
-      dimensions.heroLeft / dimensions.viewportWidth <= 0.081,
-      `${((dimensions.heroLeft / dimensions.viewportWidth) * 100).toFixed(1)}%`,
+      `${label} laptop hero fits the viewport width`,
+      Math.abs(dimensions.shellWidth - dimensions.viewportWidth) < 1 &&
+        Math.abs(dimensions.heroWidth - dimensions.viewportWidth) < 1 &&
+        Math.abs(dimensions.heroLeft) < 1 &&
+        Math.abs(dimensions.heroRight - dimensions.viewportWidth) < 1,
+      JSON.stringify(dimensions),
     );
     check(
       `${label} laptop does not render blurred side artwork`,
@@ -633,22 +617,18 @@ try {
         ).length,
     };
   });
-  const wideExpected = expectedCanvasWidth(
-    wideDesktopDimensions.viewportWidth,
-    wideDesktopDimensions.viewportHeight,
-  );
   check(
     "Wide desktop hero matches the canvas and stays centred",
-    Math.abs(wideDesktopDimensions.heroWidth - wideExpected) < 1 &&
+    Math.abs(wideDesktopDimensions.heroWidth - designWidth) < 1 &&
       Math.abs(
         wideDesktopDimensions.heroLeft -
-          (wideDesktopDimensions.viewportWidth - wideExpected) / 2,
+          (wideDesktopDimensions.viewportWidth - designWidth) / 2,
       ) < 1,
-    `expected ${Math.round(wideExpected)}px; ${JSON.stringify(wideDesktopDimensions)}`,
+    JSON.stringify(wideDesktopDimensions),
   );
   check(
     "Wide desktop never scales the Figma canvas past 1:1",
-    wideDesktopDimensions.shellWidth <= designWidth + 1,
+    Math.abs(wideDesktopDimensions.shellWidth - designWidth) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
@@ -683,18 +663,17 @@ try {
         expectedPage,
       };
     }, pageKey);
-    const pageExpected = expectedCanvasWidth(fullWidthLayout.viewportWidth, 964);
     check(
-      `${pageKey} sizes its Figma canvas to the fold on wide desktop`,
-      Math.abs(fullWidthLayout.shellWidth - pageExpected) < 1,
-      `expected ${Math.round(pageExpected)}px; ${JSON.stringify(fullWidthLayout)}`,
+      `${pageKey} renders its Figma canvas at 1:1 on wide desktop`,
+      Math.abs(fullWidthLayout.shellWidth - designWidth) < 1,
+      JSON.stringify(fullWidthLayout),
     );
     check(
       `${pageKey} visible page content matches the canvas width`,
       Math.abs(
-        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) - pageExpected,
+        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) - designWidth,
       ) < 1,
-      `expected ${Math.round(pageExpected)}px; ${JSON.stringify(fullWidthLayout)}`,
+      JSON.stringify(fullWidthLayout),
     );
     check(
       `${pageKey} does not render blurred side artwork`,

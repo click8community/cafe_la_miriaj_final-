@@ -5,13 +5,6 @@
      to fit the viewport, but never past 1:1 — beyond this the whole site just
      renders enlarged. */
   --design-width: 1728px;
-  /* Header (168px) + hero (948px) of the design: the fold we try to keep on
-     screen. Narrowing the canvas scales the whole page down, so on short
-     viewports we trade a little width to stop the hero being cut off. */
-  --design-fold-height: 1116;
-  /* Floor on that trade: the canvas never drops below this share of the
-     viewport width, so the gutters stay under ~8% per side. */
-  --min-canvas-width: 84vw;
   color: #062c34;
   background: #f9edd1;
   font-family:
@@ -70,10 +63,7 @@ main,
 .page-shell {
   position: relative;
   width: 100%;
-  max-width: min(
-    var(--design-width),
-    max(calc(100vh * 1728 / var(--design-fold-height)), var(--min-canvas-width))
-  );
+  max-width: var(--design-width);
   margin: 0 auto;
   overflow-x: hidden;
   background: #f9edd1;
