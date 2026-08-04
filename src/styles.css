@@ -1,6 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Lato:wght@400;600;700&family=MonteCarlo&display=swap");
 
 :root {
+  /* Width of the Figma canvas every page is exported at. The canvas is scaled
+     to fit the viewport, but never past 1:1 — beyond this the whole site just
+     renders enlarged. */
+  --design-width: 1728px;
   color: #062c34;
   background: #f9edd1;
   font-family:
@@ -59,7 +63,8 @@ main,
 .page-shell {
   position: relative;
   width: 100%;
-  margin: 0;
+  max-width: var(--design-width);
+  margin: 0 auto;
   overflow-x: hidden;
   background: #f9edd1;
 }

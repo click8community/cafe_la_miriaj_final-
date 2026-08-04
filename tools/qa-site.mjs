@@ -2,6 +2,9 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.QA_BASE_URL ?? "http://127.0.0.1:5174";
 const pageKeys = ["home", "about", "menu", "events", "gallery", "places"];
+// Width of the Figma canvas. Pages scale down to fit narrower viewports but are
+// never scaled past 1:1, so on a wider screen the canvas stays this wide and centres.
+const designWidth = 1728;
 const failures = [];
 const passes = [];
 
@@ -615,15 +618,17 @@ try {
     };
   });
   check(
-    "Wide desktop hero fills the viewport",
-    Math.abs(wideDesktopDimensions.heroWidth - wideDesktopDimensions.viewportWidth) < 1 &&
-      Math.abs(wideDesktopDimensions.heroLeft) < 1 &&
-      Math.abs(wideDesktopDimensions.heroRight - wideDesktopDimensions.viewportWidth) < 1,
+    "Wide desktop hero matches the canvas and stays centred",
+    Math.abs(wideDesktopDimensions.heroWidth - designWidth) < 1 &&
+      Math.abs(
+        wideDesktopDimensions.heroLeft -
+          (wideDesktopDimensions.viewportWidth - designWidth) / 2,
+      ) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
-    "Wide desktop fits the Figma content to the viewport width",
-    Math.abs(wideDesktopDimensions.shellWidth - wideDesktopDimensions.viewportWidth) < 1,
+    "Wide desktop never scales the Figma canvas past 1:1",
+    Math.abs(wideDesktopDimensions.shellWidth - designWidth) < 1,
     JSON.stringify(wideDesktopDimensions),
   );
   check(
@@ -659,15 +664,14 @@ try {
       };
     }, pageKey);
     check(
-      `${pageKey} fits its Figma canvas to wide desktop`,
-      Math.abs(fullWidthLayout.shellWidth - fullWidthLayout.viewportWidth) < 1,
+      `${pageKey} renders its Figma canvas at 1:1 on wide desktop`,
+      Math.abs(fullWidthLayout.shellWidth - designWidth) < 1,
       JSON.stringify(fullWidthLayout),
     );
     check(
-      `${pageKey} visible page content spans wide desktop`,
+      `${pageKey} visible page content matches the canvas width`,
       Math.abs(
-        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) -
-          fullWidthLayout.viewportWidth,
+        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) - designWidth,
       ) < 1,
       JSON.stringify(fullWidthLayout),
     );

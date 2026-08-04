@@ -1954,7 +1954,7 @@ function HeroMoodSwitcher({ scale }: { scale: number }) {
       style={{
         left: "50%",
         top: heroMoodSwitcher.top * scale,
-        width: "100vw",
+        width: "100%",
         height: heroMoodSwitcher.height * scale,
         transform: "translateX(-50%)",
       } as CSSProperties}
