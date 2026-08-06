@@ -2,9 +2,8 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.QA_BASE_URL ?? "http://127.0.0.1:5174";
 const pageKeys = ["home", "about", "menu", "events", "gallery", "places"];
-// Display width for the website. The source exports remain 1728px wide, but
-// the rendered desktop frame is capped at 1440px and centres on wider screens.
-const designWidth = 1440;
+// Display width for the website, matching the original 1728px-wide Figma canvas.
+const designWidth = 1728;
 const failures = [];
 const passes = [];
 
@@ -64,7 +63,7 @@ async function goto(page, pageKey) {
 
 const browser = await chromium.launch({ headless: true });
 const context = await browser.newContext({
-  viewport: { width: 1440, height: 900 },
+  viewport: { width: 1728, height: 900 },
   reducedMotion: "reduce",
 });
 
@@ -570,7 +569,7 @@ try {
     const expectedWidth = Math.min(dimensions.viewportWidth, designWidth);
     const expectedLeft = (dimensions.viewportWidth - expectedWidth) / 2;
     check(
-      `${label} laptop hero fits the 1440px desktop frame`,
+      `${label} laptop hero fits the 1728px desktop frame`,
       Math.abs(dimensions.shellWidth - expectedWidth) < 1 &&
         Math.abs(dimensions.heroWidth - expectedWidth) < 1 &&
         Math.abs(dimensions.heroLeft - expectedLeft) < 1 &&

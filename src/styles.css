@@ -1,9 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;700&family=Lato:wght@400;600;700&family=MonteCarlo&display=swap");
 
 :root {
-  /* Desktop display width. Source exports are 1728px wide, then scaled
-     to fit a normal 1440px website frame and smaller viewports. */
-  --design-width: 1440px;
+  /* Desktop display width matching the original 1728px-wide Figma canvas. */
+  --design-width: 1728px;
   color: #062c34;
   background: #f9edd1;
   font-family:
@@ -255,7 +254,7 @@ main,
   left: 0;
   z-index: 8;
   display: flex;
-  width: 1440px;
+  width: 1728px;
   height: 110px;
   align-items: center;
   justify-content: space-between;
@@ -600,7 +599,7 @@ main,
 
 .about-us-1-footer {
   display: none;
-  width: 1440px;
+  width: 1728px;
   height: 700px;
   align-items: flex-start;
   justify-content: space-between;
