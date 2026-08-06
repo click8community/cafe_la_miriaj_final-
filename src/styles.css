@@ -1647,33 +1647,20 @@ main,
   outline-offset: 6px;
 }
 
-/* Wrapper for everything that still comes from the Figma page export. On home
-   it is pulled up under the live hero; see FigmaPage. */
-.page-canvas {
-  position: relative;
-}
-
 .hero-mood {
-  position: relative;
+  position: absolute;
   z-index: 3;
-  width: 100%;
   overflow: hidden;
-  background: #002c34;
-  font-family: "Lato", Arial, Helvetica, sans-serif;
   pointer-events: none;
 }
 
 .hero-mood-canvas {
   position: absolute;
+  top: 0;
   left: 50%;
   z-index: 2;
   transform-origin: top center;
   pointer-events: none;
-}
-
-.hero-mood-canvas .hero-explore-cafe-button,
-.hero-mood-canvas .hero-mood-toggle {
-  pointer-events: auto;
 }
 
 .hero-mood-photo {
@@ -1727,7 +1714,7 @@ main,
 }
 
 .hero-mood-title span {
-  font-family: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 104px;
   font-weight: 400;
   letter-spacing: 3px;
@@ -1738,7 +1725,7 @@ main,
 
 .hero-mood-title em {
   margin-top: 30px;
-  font-family: "MonteCarlo", "Brush Script MT", "Segoe Script", cursive;
+  font-family: "Brush Script MT", "Segoe Script", cursive;
   font-size: 102px;
   font-style: italic;
   font-weight: 400;

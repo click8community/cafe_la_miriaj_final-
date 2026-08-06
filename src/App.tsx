@@ -691,21 +691,10 @@ const heroMoods = [
   {
     key: "night",
     label: "Night",
-    image: "/cafe-photos/photo-04.jpg",
+    image: "",
     icon: "/figma-exports/mood-icons/night.png?v=1",
   },
 ] as const;
-
-// The hero band as drawn in the Figma canvas. It used to be baked into the page
-// export; it is now real markup so it can fill the width and still fit a short
-// viewport, which a fixed-aspect image cannot do.
-const heroBand = {
-  top: 152,
-  height: 948,
-  get bottom() {
-    return this.top + this.height;
-  },
-};
 
 const bookingWidget = {
   x: 0,
@@ -801,29 +790,6 @@ const sharedFooterPhone = {
 
 function getContentOffset(pageKey: PageKey) {
   return pageKey === "places" ? sharedHeader.height : 0;
-}
-
-function useViewportHeight() {
-  const [height, setHeight] = useState(() =>
-    typeof window === "undefined" ? 0 : window.innerHeight,
-  );
-
-  useEffect(() => {
-    const update = () => setHeight(window.innerHeight);
-    update();
-    window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
-  }, []);
-
-  return height;
-}
-
-// Height the live hero renders at: its designed height, but never taller than
-// the space left under the fixed header, so nothing is cut off on short screens.
-function getHeroBoxHeight(scale: number, viewportHeight: number) {
-  const designHeight = heroBand.height * scale;
-  if (!viewportHeight) return designHeight;
-  return Math.max(0, Math.min(designHeight, viewportHeight - heroBand.top * scale));
 }
 
 function getFooterTop(pageKey: PageKey) {
@@ -996,9 +962,6 @@ function FigmaPage({
   const contentOffset = getContentOffset(page.key);
   const contentBottom = contentOffset + page.contentHeight;
   const usesCustomContent = page.key === "about";
-  const isHome = page.key === "home";
-  const viewportHeight = useViewportHeight();
-  const heroBoxHeight = getHeroBoxHeight(scale, viewportHeight);
 
   useEffect(() => {
     const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
@@ -1032,16 +995,6 @@ function FigmaPage({
 
   return (
     <div ref={shellRef} className="page-shell">
-      {isHome && (
-        <HeroMoodSwitcher scale={scale} boxHeight={heroBoxHeight} onNavigate={onNavigate} />
-      )}
-      {/* On home the hero is real markup above this wrapper, so the canvas is
-          pulled up until the design row below the hero meets the hero's base.
-          Everything inside keeps its original design coordinates. */}
-      <div
-        className="page-canvas"
-        style={isHome ? { marginTop: -(heroBand.bottom * scale) } : undefined}
-      >
       <div className="page-image-clip" style={{ height: contentBottom * scale }}>
         {usesCustomContent ? (
           <AboutPage1 scale={scale} onNavigate={onNavigate} />
@@ -1091,6 +1044,8 @@ function FigmaPage({
           yOffset={contentOffset}
         />
       ))}
+      {page.key === "home" && <HeroMoodSwitcher scale={scale} />}
+      {page.key === "home" && <HeroExploreCafeButton scale={scale} onNavigate={onNavigate} />}
       {page.key === "home" && (
         <span
           className="home-reservation-phone"
@@ -1152,7 +1107,6 @@ function FigmaPage({
           onClick={() => onNavigate(hotspot.action)}
         />
       ))}
-      </div>
     </div>
   );
 }
@@ -1535,6 +1489,32 @@ function ActualMenuSection({ scale }: { scale: number }) {
 }
 
 type HeroMoodKey = (typeof heroMoods)[number]["key"];
+
+function HeroExploreCafeButton({
+  scale,
+  onNavigate,
+}: {
+  scale: number;
+  onNavigate: (action: Hotspot["action"]) => void;
+}) {
+  return (
+    <button
+      className="hero-explore-cafe-button"
+      type="button"
+      aria-label="Explore the cafe"
+      style={{
+        left: heroExploreCafeButton.x * scale,
+        top: heroExploreCafeButton.y * scale,
+        width: heroExploreCafeButton.width * scale,
+        height: heroExploreCafeButton.height * scale,
+        fontSize: 25 * scale,
+      }}
+      onClick={() => onNavigate("exploreCafe")}
+    >
+      Explore the Cafe
+    </button>
+  );
+}
 
 function HomeRooftopEscapePhoto({ scale }: { scale: number }) {
   return (
@@ -1963,89 +1943,73 @@ function EventsHeroReplacement({ scale }: { scale: number }) {
   );
 }
 
-function HeroMoodSwitcher({
-  scale,
-  boxHeight,
-  onNavigate,
-}: {
-  scale: number;
-  boxHeight: number;
-  onNavigate: (action: Hotspot["action"]) => void;
-}) {
+function HeroMoodSwitcher({ scale }: { scale: number }) {
   const [activeMood, setActiveMood] = useState<HeroMoodKey>("night");
   const mood = heroMoods.find((item) => item.key === activeMood) ?? heroMoods[2];
-  // The photo always covers the box, so only the copy has to be fitted. Scaling
-  // the whole design band keeps the typography in its designed proportions.
-  const copyScale = Math.min(scale, boxHeight / heroBand.height);
+  const showMoodPhoto = mood.key !== "night";
 
   return (
     <section
       className="hero-mood"
       aria-label="Cafe day, sunset and night views"
       style={{
-        height: heroBand.top * scale + boxHeight,
+        left: "50%",
+        top: heroMoodSwitcher.top * scale,
+        width: "100%",
+        height: heroMoodSwitcher.height * scale,
+        transform: "translateX(-50%)",
       } as CSSProperties}
     >
-      <img
-        className="hero-mood-photo"
-        src={mood.image}
-        alt=""
-        aria-hidden="true"
-        draggable={false}
-      />
-      <div className="hero-mood-shade" aria-hidden="true" />
+      {showMoodPhoto && (
+        <>
+          <img
+            className="hero-mood-photo"
+            src={mood.image}
+            alt=""
+            aria-hidden="true"
+            draggable={false}
+          />
+          <div className="hero-mood-shade" aria-hidden="true" />
+        </>
+      )}
       <div
         className="hero-mood-canvas"
         style={{
-          top: heroBand.top * scale,
           width: heroMoodSwitcher.width,
           height: heroMoodSwitcher.height,
-          transform: `translateX(-50%) scale(${copyScale})`,
+          transform: `translateX(-50%) scale(${scale})`,
         }}
       >
-        <div className="hero-mood-copy">
-          <p className="hero-mood-eyebrow">Chennai's Tallest Rooftop Cafe</p>
-          <h1 className="hero-mood-title">
-            <span>Above the City</span>
-            <em>Beyond Ordinary</em>
-          </h1>
-          <p className="hero-mood-subtitle">
-            A premium yet accessible rooftop escape
-            <br />
-            where every evening becomes a escape
-          </p>
-          <div className="hero-mood-features" aria-label="Cafe highlights">
-            <span className="hero-mood-feature">
-              <i className="hero-feature-icon hero-feature-coffee" aria-hidden="true" />
-              Coffee
-            </span>
-            <span className="hero-feature-dot" aria-hidden="true" />
-            <span className="hero-mood-feature">
-              <i className="hero-feature-icon hero-feature-community" aria-hidden="true" />
-              Community
-            </span>
-            <span className="hero-feature-dot" aria-hidden="true" />
-            <span className="hero-mood-feature">
-              <i className="hero-feature-icon hero-feature-convo" aria-hidden="true" />
-              Convo
-            </span>
+        {showMoodPhoto && (
+          <div className="hero-mood-copy">
+            <p className="hero-mood-eyebrow">Chennai's Tallest Rooftop Cafe</p>
+            <h1 className="hero-mood-title">
+              <span>Above the City</span>
+              <em>Beyond Ordinary</em>
+            </h1>
+            <p className="hero-mood-subtitle">
+              A premium yet accessible rooftop escape
+              <br />
+              where every evening becomes a escape
+            </p>
+            <div className="hero-mood-features" aria-label="Cafe highlights">
+              <span className="hero-mood-feature">
+                <i className="hero-feature-icon hero-feature-coffee" aria-hidden="true" />
+                Coffee
+              </span>
+              <span className="hero-feature-dot" aria-hidden="true" />
+              <span className="hero-mood-feature">
+                <i className="hero-feature-icon hero-feature-community" aria-hidden="true" />
+                Community
+              </span>
+              <span className="hero-feature-dot" aria-hidden="true" />
+              <span className="hero-mood-feature">
+                <i className="hero-feature-icon hero-feature-convo" aria-hidden="true" />
+                Convo
+              </span>
+            </div>
           </div>
-        </div>
-        <button
-          className="hero-explore-cafe-button"
-          type="button"
-          aria-label="Explore the cafe"
-          style={{
-            left: heroExploreCafeButton.x,
-            top: heroExploreCafeButton.y - heroBand.top,
-            width: heroExploreCafeButton.width,
-            height: heroExploreCafeButton.height,
-            fontSize: 25,
-          }}
-          onClick={() => onNavigate("exploreCafe")}
-        >
-          Explore the Cafe
-        </button>
+        )}
         <div className="hero-mood-toggle" aria-label="Change cafe view">
           {heroMoods.map((item) => (
             <button

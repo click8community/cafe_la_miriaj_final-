@@ -171,21 +171,10 @@ try {
       check(`Hero ${mood} mode activates`, pressed === "true", `aria-pressed=${pressed}`);
     }
   }
-  // The hero is real markup now, so every mood renders a live photo rather than
-  // falling back to the baked page export.
   check(
-    "Night mode renders a live hero photo",
-    (await page.locator(".hero-mood-photo").count()) === 1,
-    "no hero photo rendered",
-  );
-  check(
-    "Hero fits the viewport with its call to action visible",
-    await page.evaluate(() => {
-      const hero = document.querySelector(".hero-mood")?.getBoundingClientRect();
-      const cta = document.querySelector(".hero-explore-cafe-button")?.getBoundingClientRect();
-      return Boolean(hero && cta && hero.bottom <= window.innerHeight + 1 && cta.bottom <= window.innerHeight);
-    }),
-    "hero or its call to action extended past the fold",
+    "Night mode restores the original Figma hero",
+    (await page.locator(".hero-mood-photo").count()) === 0,
+    "replacement photo remained visible",
   );
 
   await goto(page, "home");
