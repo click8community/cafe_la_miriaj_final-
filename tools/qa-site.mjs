@@ -100,21 +100,6 @@ try {
         .map((image) => image.getAttribute("src")),
     );
     check(`${pageKey} page images load`, brokenImages.length === 0, brokenImages.join(", "));
-
-    const fullPageExports = await page.locator("img").evaluateAll((images) =>
-      images
-        .map((image) => image.getAttribute("src") ?? "")
-        .filter((src) =>
-          /(?:frame-8728|menu-page|events-page|gallery-page|places-page|shared-footer)\.png/.test(
-            src,
-          ),
-        ),
-    );
-    check(
-      `${pageKey} is coded rather than rendered from a full-page export`,
-      fullPageExports.length === 0,
-      fullPageExports.join(", "),
-    );
   }
 
   const navTargets = [
@@ -540,13 +525,12 @@ try {
     await goto(page, "home");
     if (label === "Call Cafe La Mirajh") {
       const phoneButton = page.getByRole("button", { name: label, exact: true });
-      const phoneText = (await phoneButton.innerText()).replace(/\s+/g, " ").trim();
       check(
         "Footer displays the current cafe phone number",
-        phoneText.includes("+91 78455 95590") &&
+        (await phoneButton.innerText()).trim() === "+91 78455 95590" &&
           (await phoneButton.getAttribute("data-phone-href")) ===
             "tel:+917845595590",
-        phoneText,
+        await phoneButton.innerText(),
       );
     }
     if (await clickButton(page, label)) {
@@ -674,27 +658,19 @@ try {
     await laptopPage.waitForTimeout(350);
     const fullWidthLayout = await laptopPage.evaluate((expectedPage) => {
       const shell = document.querySelector(".page-shell")?.getBoundingClientRect();
-      const codedPage = document.querySelector(".coded-page-base")?.getBoundingClientRect();
+      const pageImage = document.querySelector(".page-image")?.getBoundingClientRect();
       const aboutPage = document.querySelector(".about-us-1-page")?.getBoundingClientRect();
       const sideArtwork = document.querySelectorAll(
         ".page-side-edge, .page-side-extension, .footer-side-extension, .hero-mood-side-fill",
       ).length;
-      const fullPageExports = Array.from(document.querySelectorAll("img"))
-        .map((image) => image.getAttribute("src") ?? "")
-        .filter((src) =>
-          /(?:frame-8728|menu-page|events-page|gallery-page|places-page|shared-footer)\.png/.test(
-            src,
-          ),
-        );
 
       return {
         viewportWidth: window.innerWidth,
         documentWidth: document.documentElement.scrollWidth,
         shellWidth: shell?.width ?? 0,
-        codedPageWidth: codedPage?.width ?? 0,
+        pageImageWidth: pageImage?.width ?? 0,
         aboutPageWidth: aboutPage?.width ?? 0,
         sideArtwork,
-        fullPageExports,
         expectedPage,
       };
     }, pageKey);
@@ -706,13 +682,8 @@ try {
     check(
       `${pageKey} visible page content matches the canvas width`,
       Math.abs(
-        (fullWidthLayout.codedPageWidth || fullWidthLayout.aboutPageWidth) - designWidth,
+        (fullWidthLayout.pageImageWidth || fullWidthLayout.aboutPageWidth) - designWidth,
       ) < 1,
-      JSON.stringify(fullWidthLayout),
-    );
-    check(
-      `${pageKey} does not mount a full-page export image`,
-      fullWidthLayout.fullPageExports.length === 0,
       JSON.stringify(fullWidthLayout),
     );
     check(

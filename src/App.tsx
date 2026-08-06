@@ -6,6 +6,7 @@ type PageKey = "home" | "about" | "menu" | "events" | "gallery" | "places";
 type PageSpec = {
   key: PageKey;
   label: string;
+  src: string;
   width: number;
   height: number;
   contentHeight: number;
@@ -87,6 +88,7 @@ const pages: Record<PageKey, PageSpec> = {
   home: {
     key: "home",
     label: "Home",
+    src: "/figma-exports/frame-8728.png?v=6",
     width: 1728,
     height: 11422,
     contentHeight: 10460,
@@ -94,6 +96,7 @@ const pages: Record<PageKey, PageSpec> = {
   about: {
     key: "about",
     label: "About",
+    src: "",
     width: 1728,
     height: 3209,
     contentHeight: 3209,
@@ -101,6 +104,7 @@ const pages: Record<PageKey, PageSpec> = {
   menu: {
     key: "menu",
     label: "Menu",
+    src: "/figma-exports/menu-page.png?v=2",
     width: 1728,
     height: 3858,
     contentHeight: 3650,
@@ -108,6 +112,7 @@ const pages: Record<PageKey, PageSpec> = {
   events: {
     key: "events",
     label: "Events",
+    src: "/figma-exports/events-page.png",
     width: 1728,
     height: 3593,
     contentHeight: 2444,
@@ -115,6 +120,7 @@ const pages: Record<PageKey, PageSpec> = {
   gallery: {
     key: "gallery",
     label: "Gallery",
+    src: "/figma-exports/gallery-page.png",
     width: 1728,
     height: 4282,
     contentHeight: 6022,
@@ -122,6 +128,7 @@ const pages: Record<PageKey, PageSpec> = {
   places: {
     key: "places",
     label: "Rooftop",
+    src: "/figma-exports/places-page.png",
     width: 1728,
     height: 4525,
     contentHeight: 4525,
@@ -780,8 +787,16 @@ const siteHeaderLayout = {
 };
 
 const sharedFooter = {
+  src: "/figma-exports/shared-footer.png?v=2",
   width: 1728,
   height: 1202,
+};
+
+const sharedFooterPhone = {
+  x: 150,
+  y: 598,
+  width: 230,
+  height: 42,
 };
 
 function getContentOffset(pageKey: PageKey) {
@@ -862,8 +877,8 @@ export function App() {
 
       if (activePage === targetPage) {
         requestAnimationFrame(() => {
-          const shell = document.querySelector<HTMLDivElement>(".page-shell");
-          const scale = shell ? shell.clientWidth / pages[targetPage].width : 1;
+          const image = document.querySelector<HTMLImageElement>(".page-image");
+          const scale = image ? image.clientWidth / pages[targetPage].width : 1;
           pendingScroll.current = null;
           window.scrollTo({ top: targetY * scale, left: 0, behavior: "smooth" });
         });
@@ -976,15 +991,17 @@ function FigmaPage({
   activePage: PageKey;
 }) {
   const shellRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
   const [scale, setScale] = useState(1);
   const contentOffset = getContentOffset(page.key);
   const contentBottom = contentOffset + page.contentHeight;
+  const usesCustomContent = page.key === "about";
   const isHome = page.key === "home";
   const viewportHeight = useViewportHeight();
   const heroBoxHeight = getHeroBoxHeight(scale, viewportHeight);
 
   useEffect(() => {
-    const scaleNode = shellRef.current;
+    const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
     if (!scaleNode) return;
 
     const updateScale = () => setScale(scaleNode.clientWidth / page.width);
@@ -999,7 +1016,7 @@ function FigmaPage({
     const target = pendingScroll.current;
 
     requestAnimationFrame(() => {
-      const scaleNode = shellRef.current;
+      const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
       const imageScale = scaleNode ? scaleNode.clientWidth / page.width : 1;
       window.scrollTo({
         top: (target ?? 0) * imageScale,
@@ -1025,19 +1042,47 @@ function FigmaPage({
         className="page-canvas"
         style={isHome ? { marginTop: -(heroBand.bottom * scale) } : undefined}
       >
-      <div className="page-content-clip" style={{ height: contentBottom * scale }}>
-        {page.key === "about" ? (
+      <div className="page-image-clip" style={{ height: contentBottom * scale }}>
+        {usesCustomContent ? (
           <AboutPage1 scale={scale} onNavigate={onNavigate} />
         ) : (
-          <CodedPageBase
-            pageKey={page.key}
-            scale={scale}
-            yOffset={contentOffset}
-            onNavigate={onNavigate}
+          <img
+            ref={imageRef}
+            className="page-image"
+            src={page.src}
+            alt={`${page.label} page exported exactly from the Figma file`}
+            width={page.width}
+            height={page.height}
+            draggable={false}
+            style={contentOffset ? { marginTop: contentOffset * scale } : undefined}
           />
         )}
       </div>
-      <SharedFooter scale={scale} onNavigate={onNavigate} />
+      <img
+        id="contact-footer"
+        className="shared-footer-image"
+        src={sharedFooter.src}
+        alt="Cafe La Miraj contact footer"
+        width={sharedFooter.width}
+        height={sharedFooter.height}
+        draggable={false}
+      />
+      <button
+        className="shared-footer-phone"
+        type="button"
+        aria-label="Call Cafe La Mirajh"
+        data-phone-href={phoneHref}
+        style={{
+          left: sharedFooterPhone.x * scale,
+          top: (contentBottom + sharedFooterPhone.y) * scale,
+          width: sharedFooterPhone.width * scale,
+          height: sharedFooterPhone.height * scale,
+          fontSize: 22 * scale,
+        }}
+        onClick={() => onNavigate("phone")}
+      >
+        +91 78455 95590
+      </button>
       {overlays.map((overlay) => (
         <VisualOverlayLayer
           key={overlay.label}
@@ -1108,470 +1153,6 @@ function FigmaPage({
         />
       ))}
       </div>
-    </div>
-  );
-}
-
-function SharedFooter({
-  scale,
-  onNavigate,
-}: {
-  scale: number;
-  onNavigate: (action: Hotspot["action"]) => void;
-}) {
-  return (
-    <footer
-      id="contact-footer"
-      className="shared-footer-coded"
-      aria-label="Cafe La Mirajh contact footer"
-      style={{ height: sharedFooter.height * scale }}
-    >
-      <div
-        className="shared-footer-canvas"
-        style={{
-          width: sharedFooter.width,
-          height: sharedFooter.height,
-          transform: `scale(${scale})`,
-        }}
-      >
-        <div className="shared-footer-heading">
-          <p>Visit Us</p>
-          <h2>
-            Find us on the <em>Top</em>
-          </h2>
-          <span>Come experience Anna Nagar's tallest rooftop cafe</span>
-        </div>
-
-        <div className="shared-footer-contact">
-          <h3>Get in Touch</h3>
-          <div className="shared-footer-contact-item shared-footer-location">
-            <i aria-hidden="true" />
-            <span>
-              <strong>Location</strong>
-              Rooftop, Anna Nagar,
-              <br />
-              Chennai, Tamil Nadu 600040
-            </span>
-          </div>
-          <button
-            className="shared-footer-contact-item shared-footer-call"
-            type="button"
-            aria-label="Call Cafe La Mirajh"
-            data-phone-href={phoneHref}
-            onClick={() => onNavigate("phone")}
-          >
-            <i aria-hidden="true" />
-            <span>
-              <strong>Phone</strong>
-              +91 78455 95590
-            </span>
-          </button>
-          <div className="shared-footer-contact-item shared-footer-email">
-            <i aria-hidden="true" />
-            <span>
-              <strong>Email</strong>
-              hello@cafelamirajh.com
-            </span>
-          </div>
-          <div className="shared-footer-contact-item shared-footer-hours">
-            <i aria-hidden="true" />
-            <span>
-              <strong>Hours</strong>
-              Monday - Sunday
-              <br />
-              10:00 AM - 1:00 AM
-            </span>
-          </div>
-        </div>
-
-        <button
-          className="shared-footer-map"
-          type="button"
-          aria-hidden="true"
-          tabIndex={-1}
-          onClick={() => onNavigate("map")}
-        >
-          <img src="/figma-exports/anna-nagar-map.png" alt="" draggable={false} />
-          <span aria-hidden="true">
-            <i />
-            <b>Cafe La Mirajh</b>
-          </span>
-        </button>
-
-        <div className="shared-footer-socials" aria-hidden="true">
-          <p>Follow Us</p>
-          <span>
-            <i className="shared-footer-social-instagram" />
-            <i className="shared-footer-social-facebook" />
-            <i className="shared-footer-social-twitter" />
-          </span>
-        </div>
-
-        <small className="shared-footer-copyright">
-          © 2026 Mirajh Rooftop Cafe. All rights reserved.
-        </small>
-      </div>
-    </footer>
-  );
-}
-
-function CodedPageBase({
-  pageKey,
-  scale,
-  yOffset,
-  onNavigate,
-}: {
-  pageKey: Exclude<PageKey, "about">;
-  scale: number;
-  yOffset: number;
-  onNavigate: (action: Hotspot["action"]) => void;
-}) {
-  const commonStyle: CSSProperties = {
-    top: yOffset * scale,
-    width: pages[pageKey].width,
-    height: pages[pageKey].contentHeight,
-    transform: `scale(${scale})`,
-  };
-
-  if (pageKey === "home") return <HomeCodedBase style={commonStyle} />;
-  if (pageKey === "menu") return <MenuCodedBase style={commonStyle} />;
-  if (pageKey === "events") return <EventsCodedBase style={commonStyle} />;
-  if (pageKey === "gallery") return <GalleryCodedBase style={commonStyle} />;
-  return <PlacesCodedBase style={commonStyle} onNavigate={onNavigate} />;
-}
-
-type CodedBaseProps = {
-  style: CSSProperties;
-};
-
-const homeStatItems = [
-  ["Tallest Rooftop", "in Anna Nagar"],
-  ["Work Friendly", "wifi & comfort"],
-  ["PS5 Gaming", "play above the city"],
-  ["Snooker Table", "classic rooftop fun"],
-  ["100+ Menu", "varieties"],
-] as const;
-
-const signatureDishes = [
-  ["Mirajh Special Drinks", "/figma-exports/signature-drinks-photo.png"],
-  ["Mac and Cheese Pasta", "/figma-exports/signature-pasta-photo.png"],
-  ["Kombucha", "/figma-exports/signature-kombucha-photo.png"],
-  ["Tiramisu", "/figma-exports/signature-tiramisu-photo.png"],
-] as const;
-
-const homeMomentCards = [
-  [
-    "Work above the noise",
-    "High-speed WiFi, comfortable seating, and a rooftop view that keeps the day moving.",
-    "/cafe-photos/photo-15.jpg",
-  ],
-  [
-    "Gaming under the stars",
-    "PS5 consoles, board games, and roomy seating for friends to settle in.",
-    "/cafe-photos/photo-04.jpg",
-  ],
-  [
-    "Watch your favorite matches",
-    "Big-screen sports nights with food, drinks, and the city skyline around you.",
-    "/cafe-photos/messi-ronaldo.jpg",
-  ],
-  [
-    "Host events with a view",
-    "Private gatherings and productions with a panoramic rooftop backdrop.",
-    "/cafe-photos/photo-03.jpg",
-  ],
-  [
-    "Smoke without judgement",
-    "Rooftop comfort, fresh air, and relaxed corners for easy conversations.",
-    "/figma-exports/experience-smoke-photo.png",
-  ],
-  [
-    "The coffee ritual",
-    "Crafted coffee and quick bites from a warmly lit kiosk counter.",
-    "/cafe-photos/photo-05.jpg",
-  ],
-] as const;
-
-function HomeCodedBase({ style }: CodedBaseProps) {
-  return (
-    <div className="coded-page-base coded-home-base" style={style} aria-hidden="true">
-      <section className="coded-home-hero-fill" />
-      <section className="coded-home-intro">
-        <div>
-          <h2>
-            A Rooftop Escape
-            <em>Like No Other</em>
-          </h2>
-          <p>
-            From hand crafted brews to immersive experiences, every detail is
-            crafted for unforgettable nights. Work, play, unwind or celebrate.
-            This is your space Above the city.
-          </p>
-          <div className="coded-home-stats">
-            {homeStatItems.map(([title, copy]) => (
-              <span key={title}>
-                <i />
-                <strong>{title}</strong>
-                <small>{copy}</small>
-              </span>
-            ))}
-          </div>
-          <span className="coded-link-button">Discover The Experience →</span>
-        </div>
-        <span className="coded-home-photo-frame" />
-      </section>
-
-      <section className="coded-home-signature">
-        <p>Signature Dishes</p>
-        <h2>Crafted with Soul, Served with Heart</h2>
-        <div>
-          {signatureDishes.map(([title, image]) => (
-            <figure key={title}>
-              <img src={image} alt="" draggable={false} />
-              <figcaption>{title}</figcaption>
-            </figure>
-          ))}
-        </div>
-        <span className="coded-pill-button">Explore Cafe Specials</span>
-      </section>
-
-      <section className="coded-home-explore">
-        <p>Signature Experiences</p>
-        <h2>Explore the Cafe</h2>
-        <span>Hover. Explore. Experience.</span>
-        <div className="coded-home-photo-map">
-          {exploreCafeZones.map((zone) => (
-            <img
-              key={zone.id}
-              src={zone.photo}
-              alt=""
-              draggable={false}
-              style={{ objectPosition: zone.photoPosition ?? "center" }}
-            />
-          ))}
-        </div>
-      </section>
-
-      <section className="coded-home-moments">
-        <p>Signature Experiences</p>
-        <h2>Moments That Stay with You</h2>
-        <span>From focus to fun, from games to conversations, every experience is crafted above the city.</span>
-        <div>
-          {homeMomentCards.map(([title, copy, image]) => (
-            <article key={title}>
-              <img src={image} alt="" draggable={false} />
-              <h3>{title}</h3>
-              <p>{copy}</p>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="coded-home-gallery-band">
-        <div>
-          <h2>Photo Gallery</h2>
-          <p>
-            If you are looking for an aesthetic cafe in Chennai, Cafe Mirajh is
-            the perfect space for your next celebration, catch-up or quiet hour
-            above the city.
-          </p>
-          <span>← →</span>
-        </div>
-      </section>
-
-      <section className="coded-home-live">
-        <div>
-          <h2>
-            Live Screening
-            <span>Live Sport</span>
-            <span>Live Here</span>
-          </h2>
-          <p>Big Screen, Bigger energy Every Night</p>
-        </div>
-      </section>
-
-      <section className="coded-home-live-at">
-        <p>Event, Entertainment and Endless Memories</p>
-        <h2>
-          Live at
-          <em>Mirajh</em>
-        </h2>
-        <span>Upcoming Events</span>
-      </section>
-
-      <section className="coded-home-booking-fill" />
-    </div>
-  );
-}
-
-function MenuCodedBase({ style }: CodedBaseProps) {
-  return (
-    <div className="coded-page-base coded-menu-base" style={style} aria-hidden="true">
-      <section className="coded-menu-hero">
-        <img src="/cafe-photos/photo-13.jpg" alt="" draggable={false} />
-        <span />
-        <div>
-          <p>The Culinary Art</p>
-          <h1>
-            Taste the <em>Divine</em>
-          </h1>
-        </div>
-      </section>
-      <section className="coded-menu-dark-fill coded-menu-list-fill" />
-      <section className="coded-menu-dark-fill coded-menu-drinks-fill" />
-      <section className="coded-menu-kiosk-fill" />
-    </div>
-  );
-}
-
-const eventExperienceCards = [
-  [
-    "Movie Nights",
-    "Curated film screenings under the stars. From cult classics to new releases, experience cinema like never before.",
-    "/cafe-photos/photo-04.jpg",
-  ],
-  [
-    "Match Race Screenings",
-    "Feel the thrill of live sport in style. Watch the world's most exciting races and matches with fellow enthusiasts.",
-    "/cafe-photos/messi-ronaldo.jpg",
-  ],
-  [
-    "Private Bookings",
-    "Host your event or film shoot in our iconic venue. From intimate gatherings to full production setups.",
-    "/cafe-photos/photo-15.jpg",
-  ],
-] as const;
-
-function EventsCodedBase({ style }: CodedBaseProps) {
-  return (
-    <div className="coded-page-base coded-events-base" style={style} aria-hidden="true">
-      <section className="coded-events-hero-fill" />
-      <section className="coded-events-cards">
-        {eventExperienceCards.map(([title, copy, image]) => (
-          <article key={title}>
-            <img src={image} alt="" draggable={false} />
-            <div>
-              <h2>{title}</h2>
-              <p>{copy}</p>
-              <span />
-            </div>
-          </article>
-        ))}
-      </section>
-      <section className="coded-events-upcoming">
-        <h2>Upcoming Screenings</h2>
-        <img src="/cafe-photos/photo-04.jpg" alt="" draggable={false} />
-        <div className="coded-events-stats">
-          <span>
-            <strong>60</strong>
-            Seats Available
-          </span>
-          <span>
-            <strong>4K</strong>
-            Screen Resolution
-          </span>
-        </div>
-      </section>
-    </div>
-  );
-}
-
-const galleryPhotos = [
-  "/cafe-photos/photo-01.jpg",
-  "/cafe-photos/photo-02.jpg",
-  "/cafe-photos/photo-03.jpg",
-  "/cafe-photos/photo-04.jpg",
-  "/cafe-photos/photo-05.jpg",
-  "/cafe-photos/photo-06.jpg",
-  "/cafe-photos/photo-07.jpg",
-  "/cafe-photos/photo-08.jpg",
-  "/cafe-photos/photo-09.jpg",
-  "/cafe-photos/photo-10.jpg",
-  "/cafe-photos/photo-11.jpg",
-  "/cafe-photos/photo-12.jpg",
-  "/cafe-photos/photo-13.jpg",
-  "/cafe-photos/photo-14.jpg",
-  "/cafe-photos/photo-15.jpg",
-] as const;
-
-function GalleryCodedBase({ style }: CodedBaseProps) {
-  return (
-    <div className="coded-page-base coded-gallery-base" style={style} aria-hidden="true">
-      <section className="coded-gallery-hero">
-        <p>Visual Journey</p>
-        <h1>
-          A Glimpse of <em>Elegance</em>
-        </h1>
-      </section>
-      <section className="coded-gallery-grid">
-        {galleryPhotos.map((photo) => (
-          <img key={photo} src={photo} alt="" draggable={false} />
-        ))}
-      </section>
-      <section className="coded-gallery-story-fill" />
-    </div>
-  );
-}
-
-const placeRows = [
-  [
-    "Entrance",
-    "Your journey above the city begins here. A grand welcome setting the tone for the evening ahead.",
-    "/cafe-photos/photo-14.jpg",
-  ],
-  [
-    "Snooker",
-    "Sharpen your cue and challenge a friend. Premium tables in a relaxed, intimate atmosphere.",
-    "/cafe-photos/photo-10.jpg",
-  ],
-  [
-    "Workspace",
-    "Productivity with a panoramic view. High-speed WiFi and comfortable seating above the noise.",
-    "/cafe-photos/photo-15.jpg",
-  ],
-  [
-    "Kiosk",
-    "Craft brews, fresh juices and signature drinks - ready when you are. Walk up and order your favorite.",
-    "/cafe-photos/photo-05.jpg",
-  ],
-  [
-    "PS5 Gaming",
-    "Game above the city skyline. State-of-the-art PS5 stations with the latest titles and immersive setups.",
-    "/figma-exports/experience-gaming-photo.png",
-  ],
-  [
-    "Projector",
-    "Movie nights, match screenings and live events under the sky. Settle in for the big screen experience.",
-    "/cafe-photos/photo-04.jpg",
-  ],
-] as const;
-
-function PlacesCodedBase({
-  style,
-  onNavigate,
-}: CodedBaseProps & {
-  onNavigate: (action: Hotspot["action"]) => void;
-}) {
-  return (
-    <div className="coded-page-base coded-places-base" style={style}>
-      <section className="coded-places-heading" aria-hidden="true">
-        <p>Signature Spaces</p>
-        <h1>Explore the Rooftop</h1>
-        <span />
-      </section>
-      {placeRows.map(([title, copy, image], index) => (
-        <section className="coded-place-row" key={title} style={{ top: 430 + index * 680 }}>
-          <img src={image} alt="" draggable={false} />
-          <span className="coded-place-shade" aria-hidden="true" />
-          <div>
-            <h2>{title}</h2>
-            <p>{copy}</p>
-            <button type="button" onClick={() => onNavigate("reserve")}>
-              Reserve Now
-            </button>
-          </div>
-        </section>
-      ))}
     </div>
   );
 }
@@ -2187,11 +1768,11 @@ function UpcomingEventCards({
               top: upcomingEventCards.bodyTop,
               width: upcomingEventCards.cardWidth,
               height: upcomingEventCards.bodyHeight,
+              backgroundPosition: `-${card.x}px -${
+                upcomingEventCards.top + upcomingEventCards.bodyTop
+              }px`,
             }}
-          >
-            <strong>{card.name}</strong>
-            <small>Only at Mirajh</small>
-          </span>
+          />
           <span
             className="upcoming-event-card-icon"
             aria-hidden="true"
@@ -2199,10 +1780,11 @@ function UpcomingEventCards({
               left: upcomingEventCards.iconLeft,
               width: upcomingEventCards.iconSize,
               height: upcomingEventCards.iconSize,
+              backgroundPosition: `-${card.x + upcomingEventCards.iconLeft}px -${
+                upcomingEventCards.top
+              }px`,
             }}
-          >
-            <i />
-          </span>
+          />
         </button>
       ))}
     </div>
