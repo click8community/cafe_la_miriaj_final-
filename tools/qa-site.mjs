@@ -2,9 +2,9 @@ import { chromium } from "playwright";
 
 const baseUrl = process.env.QA_BASE_URL ?? "http://127.0.0.1:5174";
 const pageKeys = ["home", "about", "menu", "events", "gallery", "places"];
-// Width of the Figma canvas. Pages scale down to fit narrower viewports but are
-// never scaled past 1:1, so on a wider screen the canvas stays this wide and centres.
-const designWidth = 1728;
+// Display width for the website. The source exports remain 1728px wide, but
+// the rendered desktop frame is capped at 1440px and centres on wider screens.
+const designWidth = 1440;
 const failures = [];
 const passes = [];
 
@@ -567,12 +567,14 @@ try {
       };
     });
     const label = `${viewport.width}x${viewport.height}`;
+    const expectedWidth = Math.min(dimensions.viewportWidth, designWidth);
+    const expectedLeft = (dimensions.viewportWidth - expectedWidth) / 2;
     check(
-      `${label} laptop hero fits the viewport width`,
-      Math.abs(dimensions.shellWidth - dimensions.viewportWidth) < 1 &&
-        Math.abs(dimensions.heroWidth - dimensions.viewportWidth) < 1 &&
-        Math.abs(dimensions.heroLeft) < 1 &&
-        Math.abs(dimensions.heroRight - dimensions.viewportWidth) < 1,
+      `${label} laptop hero fits the 1440px desktop frame`,
+      Math.abs(dimensions.shellWidth - expectedWidth) < 1 &&
+        Math.abs(dimensions.heroWidth - expectedWidth) < 1 &&
+        Math.abs(dimensions.heroLeft - expectedLeft) < 1 &&
+        Math.abs(dimensions.heroRight - (expectedLeft + expectedWidth)) < 1,
       JSON.stringify(dimensions),
     );
     check(
