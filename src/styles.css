@@ -64,79 +64,8 @@ main,
   width: 100%;
   max-width: var(--design-width);
   margin: 0 auto;
-  overflow: visible;
+  overflow-x: hidden;
   background: #f9edd1;
-  isolation: isolate;
-}
-
-.page-shell::before,
-.page-shell::after {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  z-index: 0;
-  width: max(0px, calc((100vw - 100%) / 2));
-  background-position: top center;
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  content: "";
-  pointer-events: none;
-}
-
-.page-shell::before {
-  right: 100%;
-}
-
-.page-shell::after {
-  left: 100%;
-}
-
-.site-frame-home .page-shell::before {
-  background-image: url("/figma-exports/page-edges/home-left.jpg");
-}
-
-.site-frame-home .page-shell::after {
-  background-image: url("/figma-exports/page-edges/home-right.jpg");
-}
-
-.site-frame-about .page-shell::before {
-  background-image: url("/figma-exports/page-edges/about-left.jpg");
-}
-
-.site-frame-about .page-shell::after {
-  background-image: url("/figma-exports/page-edges/about-right.jpg");
-}
-
-.site-frame-menu .page-shell::before {
-  background-image: url("/figma-exports/page-edges/menu-left.jpg");
-}
-
-.site-frame-menu .page-shell::after {
-  background-image: url("/figma-exports/page-edges/menu-right.jpg");
-}
-
-.site-frame-events .page-shell::before {
-  background-image: url("/figma-exports/page-edges/events-left.jpg");
-}
-
-.site-frame-events .page-shell::after {
-  background-image: url("/figma-exports/page-edges/events-right.jpg");
-}
-
-.site-frame-gallery .page-shell::before {
-  background-image: url("/figma-exports/page-edges/gallery-left.jpg");
-}
-
-.site-frame-gallery .page-shell::after {
-  background-image: url("/figma-exports/page-edges/gallery-right.jpg");
-}
-
-.site-frame-places .page-shell::before {
-  background-image: url("/figma-exports/page-edges/places-left.jpg");
-}
-
-.site-frame-places .page-shell::after {
-  background-image: url("/figma-exports/page-edges/places-right.jpg");
 }
 
 .site-frame-about .page-image-clip {
