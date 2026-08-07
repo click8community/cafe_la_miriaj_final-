@@ -810,10 +810,90 @@ function pageFromHash(): PageKey {
   return value in pages ? value : "home";
 }
 
+function useScrollAtmosphere(activePage: PageKey) {
+  useEffect(() => {
+    const root = document.documentElement;
+    let animationFrame = 0;
+
+    function updateScrollVars() {
+      const scrollableHeight = Math.max(root.scrollHeight - window.innerHeight, 1);
+      const progress = Math.min(Math.max(window.scrollY / scrollableHeight, 0), 1);
+      const heroDepth = Math.min(Math.max(window.scrollY / Math.max(window.innerHeight, 1), 0), 1);
+
+      root.style.setProperty("--scroll-progress", progress.toFixed(4));
+      root.style.setProperty("--hero-depth", heroDepth.toFixed(4));
+      animationFrame = 0;
+    }
+
+    function requestUpdate() {
+      if (animationFrame) return;
+      animationFrame = window.requestAnimationFrame(updateScrollVars);
+    }
+
+    updateScrollVars();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+    window.addEventListener("resize", requestUpdate);
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      window.removeEventListener("resize", requestUpdate);
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [activePage]);
+}
+
+function useScrollReveals<T extends HTMLElement>(
+  containerRef: MutableRefObject<T | null>,
+  activePage: PageKey,
+) {
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const staggerParents = Array.from(container.querySelectorAll<HTMLElement>(".motion-stagger"));
+
+    staggerParents.forEach((parent) => {
+      Array.from(parent.children).forEach((child, index) => {
+        if (!(child instanceof HTMLElement)) return;
+        child.classList.add("motion-reveal", "motion-reveal-child");
+        child.style.setProperty("--motion-order", String(Math.min(index, 8)));
+      });
+    });
+
+    const revealItems = Array.from(container.querySelectorAll<HTMLElement>(".motion-reveal"));
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      revealItems.forEach((item) => item.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      {
+        rootMargin: "0px 0px -12% 0px",
+        threshold: 0.14,
+      },
+    );
+
+    revealItems.forEach((item) => observer.observe(item));
+    return () => observer.disconnect();
+  }, [activePage, containerRef]);
+}
+
 export function App() {
   const [activePage, setActivePage] = useState<PageKey>(() => pageFromHash());
   const [status, setStatus] = useState("");
   const pendingScroll = useRef<number | null>(null);
+  useScrollAtmosphere(activePage);
 
   useEffect(() => {
     const onHashChange = () => setActivePage(pageFromHash());
@@ -925,6 +1005,7 @@ export function App() {
       className={`site-frame site-frame-${activePage}`}
       style={{ "--page-width": `${page.width}px` } as CSSProperties}
     >
+      <span className="scroll-progress" aria-hidden="true" />
       <FigmaPage
         key={page.key}
         page={page}
@@ -962,6 +1043,7 @@ function FigmaPage({
   const contentOffset = getContentOffset(page.key);
   const contentBottom = contentOffset + page.contentHeight;
   const usesCustomContent = page.key === "about";
+  useScrollReveals(shellRef, page.key);
 
   useEffect(() => {
     const scaleNode = usesCustomContent ? shellRef.current : imageRef.current;
@@ -1001,7 +1083,7 @@ function FigmaPage({
         ) : (
           <img
             ref={imageRef}
-            className="page-image"
+            className="page-image motion-page-enter"
             src={page.src}
             alt={`${page.label} page exported exactly from the Figma file`}
             width={page.width}
@@ -1013,7 +1095,7 @@ function FigmaPage({
       </div>
       <img
         id="contact-footer"
-        className="shared-footer-image"
+        className="shared-footer-image motion-reveal"
         src={sharedFooter.src}
         alt="Cafe La Miraj contact footer"
         width={sharedFooter.width}
@@ -1021,7 +1103,7 @@ function FigmaPage({
         draggable={false}
       />
       <button
-        className="shared-footer-phone"
+        className="shared-footer-phone motion-reveal"
         type="button"
         aria-label="Call Cafe La Mirajh"
         data-phone-href={phoneHref}
@@ -1127,10 +1209,10 @@ function AboutPage1({
       data-node-id="3740:1453"
       style={{ transform: `scale(${scale})` }}
     >
-      <section className="about-us-1-hero" data-node-id="3740:1464">
+      <section className="about-us-1-hero motion-reveal" data-node-id="3740:1464">
         <img src="/cafe-photos/photo-03.jpg" alt="" aria-hidden="true" draggable={false} />
         <span className="about-us-1-hero-shade" aria-hidden="true" />
-        <div className="about-us-1-hero-copy">
+        <div className="about-us-1-hero-copy motion-stagger">
           <p>Chennai’s Tallest Rooftop Cafe</p>
           <h1>
             <span>Above the</span>
@@ -1143,8 +1225,8 @@ function AboutPage1({
         </div>
       </section>
 
-      <section className="about-us-1-welcome" data-node-id="3740:1474">
-        <div className="about-us-1-welcome-copy">
+      <section className="about-us-1-welcome motion-reveal" data-node-id="3740:1474">
+        <div className="about-us-1-welcome-copy motion-stagger">
           <div>
             <p className="about-us-1-kicker">Experience</p>
             <h2>
@@ -1164,7 +1246,7 @@ function AboutPage1({
           </button>
         </div>
         <img
-          className="about-us-1-arch-photo"
+          className="about-us-1-arch-photo motion-reveal"
           src="/cafe-photos/photo-14.jpg"
           alt=""
           aria-hidden="true"
@@ -1172,12 +1254,12 @@ function AboutPage1({
         />
       </section>
 
-      <section className="about-us-1-experience" data-node-id="3740:1484">
-        <div className="about-us-1-section-heading">
+      <section className="about-us-1-experience motion-reveal" data-node-id="3740:1484">
+        <div className="about-us-1-section-heading motion-stagger">
           <p>The Experience</p>
           <h2>Life looks different from up here</h2>
         </div>
-        <div className="about-us-1-card-row">
+        <div className="about-us-1-card-row motion-stagger">
           <AboutPage1Card
             image="/cafe-photos/photo-05.jpg"
             title="Coffee"
@@ -1196,7 +1278,7 @@ function AboutPage1({
         </div>
       </section>
 
-      <section className="about-us-1-cta" data-node-id="3740:1507">
+      <section className="about-us-1-cta motion-reveal motion-stagger" data-node-id="3740:1507">
         <div>
           <h2>
             Reserve your table in the <em>Sky</em>
@@ -1208,7 +1290,7 @@ function AboutPage1({
         </button>
       </section>
 
-      <footer className="about-us-1-footer" data-node-id="3740:1513">
+      <footer className="about-us-1-footer motion-reveal" data-node-id="3740:1513">
         <div className="about-us-1-footer-copy">
           <div>
             <h2>Aura</h2>
@@ -1285,14 +1367,14 @@ function FigmaMenuSection({ scale }: { scale: number }) {
 
   return (
     <section
-      className="figma-menu-section"
+      className="figma-menu-section motion-reveal motion-transform-inline"
       aria-label="Cafe La Mirajh featured menu"
       style={{
         left: figmaMenuSection.x * scale,
         top: figmaMenuSection.y * scale,
         width: figmaMenuSection.width,
         height: figmaMenuSection.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       <div className="figma-menu-tabs" role="tablist" aria-label="Menu categories">
@@ -1323,7 +1405,7 @@ function FigmaMenuSection({ scale }: { scale: number }) {
       )}
 
       <div
-        className={`figma-menu-items${
+        className={`figma-menu-items motion-stagger${
           activeCategory.key === "drinks" ? " has-intro" : ""
         }`}
         id="figma-menu-items"
@@ -1348,22 +1430,22 @@ function FigmaMenuSection({ scale }: { scale: number }) {
 function SignatureDrinksSection({ scale }: { scale: number }) {
   return (
     <section
-      className="signature-drinks-section"
+      className="signature-drinks-section motion-reveal motion-transform-inline"
       aria-label="Alcohol-free flavors"
       style={{
         left: signatureDrinksSection.x * scale,
         top: signatureDrinksSection.y * scale,
         width: signatureDrinksSection.width,
         height: signatureDrinksSection.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
-      <div className="signature-drinks-heading">
+      <div className="signature-drinks-heading motion-stagger">
         <p>Spirit-Free Signatures</p>
         <h2>Alcohol-Free Flavors</h2>
         <span>Crafted with spirit-inspired essences - no ABV, all character.</span>
       </div>
-      <div className="signature-drinks-grid">
+      <div className="signature-drinks-grid motion-stagger">
         {spiritFreeSignatureDrinks.map((drink) => (
           <article className="signature-drink-card" key={drink.name}>
             <h3>{drink.name}</h3>
@@ -1385,14 +1467,14 @@ function KioskMenuFeature({
 }) {
   return (
     <section
-      className="kiosk-menu-feature"
+      className="kiosk-menu-feature motion-reveal motion-transform-inline"
       aria-label="The Cafe Kiosk"
       style={{
         left: kioskMenuFeature.x * scale,
         top: kioskMenuFeature.y * scale,
         width: kioskMenuFeature.width,
         height: kioskMenuFeature.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       <img
@@ -1401,7 +1483,7 @@ function KioskMenuFeature({
         alt="Cafe La Mirajh kiosk counter"
         draggable={false}
       />
-      <div className="kiosk-menu-copy">
+      <div className="kiosk-menu-copy motion-stagger">
         <p>The Kiosk</p>
         <h2>The Cafe Kiosk</h2>
         <div className="kiosk-menu-description">
@@ -1429,14 +1511,14 @@ function ActualMenuSection({ scale }: { scale: number }) {
 
   return (
     <section
-      className="actual-menu-section"
+      className="actual-menu-section motion-reveal motion-transform-inline"
       aria-label="Cafe La Mirajh actual menu"
       style={{
         left: actualMenuSection.x * scale,
         top: actualMenuSection.y * scale,
         width: actualMenuSection.width,
         height: actualMenuSection.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       <div className="actual-menu-header">
@@ -1444,7 +1526,7 @@ function ActualMenuSection({ scale }: { scale: number }) {
           <p className="actual-menu-kicker">Menu</p>
           <h2 className="actual-menu-title">Cafe La Mirajh Menu</h2>
         </div>
-        <div className="actual-menu-tabs" role="tablist" aria-label="Menu categories">
+        <div className="actual-menu-tabs motion-stagger" role="tablist" aria-label="Menu categories">
           {actualMenuCategories.map((category) => {
             const isActive = category.key === activeCategory.key;
 
@@ -1465,7 +1547,7 @@ function ActualMenuSection({ scale }: { scale: number }) {
         </div>
       </div>
 
-      <div className="actual-menu-pages" aria-live="polite">
+      <div className="actual-menu-pages motion-stagger" aria-live="polite">
         {activeCategory.pages.map((pageSrc, index) => (
           <a
             className="actual-menu-page"
@@ -1499,7 +1581,7 @@ function HeroExploreCafeButton({
 }) {
   return (
     <button
-      className="hero-explore-cafe-button"
+      className="hero-explore-cafe-button motion-page-cta"
       type="button"
       aria-label="Explore the cafe"
       style={{
@@ -1519,7 +1601,7 @@ function HeroExploreCafeButton({
 function HomeRooftopEscapePhoto({ scale }: { scale: number }) {
   return (
     <img
-      className="home-rooftop-escape-photo"
+      className="home-rooftop-escape-photo motion-reveal"
       src={homeRooftopEscapePhoto.src}
       alt="Rooftop lounge seating and projector at Cafe La Mirajh"
       draggable={false}
@@ -1574,7 +1656,9 @@ function ExploreCafeExperience({
 
   return (
     <section
-      className={`explore-cafe-experience${dissolvingZoneId ? " is-dissolving" : ""}${
+      className={`explore-cafe-experience motion-reveal motion-transform-inline ${
+        dissolvingZoneId ? " is-dissolving" : ""
+      }${
         detailZone ? " is-showing-detail" : ""
       }`}
       aria-label="Interactive Cafe La Mirajh floor plan"
@@ -1583,7 +1667,7 @@ function ExploreCafeExperience({
         top: exploreCafeExperience.top * scale,
         width: exploreCafeExperience.width,
         height: exploreCafeExperience.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
       onMouseLeave={() => {
         if (!dissolvingZoneId && !detailZone) setActiveZoneId(null);
@@ -1718,14 +1802,14 @@ function UpcomingEventCards({
 }) {
   return (
     <div
-      className="upcoming-event-cards"
+      className="upcoming-event-cards motion-reveal motion-transform-inline motion-stagger"
       aria-label="Upcoming event categories"
       style={{
         left: 0,
         top: upcomingEventCards.top * scale,
         width: upcomingEventCards.width,
         height: upcomingEventCards.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       {upcomingEventCards.cards.map((card) => (
@@ -1774,14 +1858,14 @@ function UpcomingEventCards({
 function HomeEventsDivider({ scale }: { scale: number }) {
   return (
     <div
-      className="home-events-divider"
+      className="home-events-divider motion-reveal motion-transform-inline"
       aria-hidden="true"
       style={{
         left: 0,
         top: homeEventsDivider.top * scale,
         width: homeEventsDivider.width,
         height: homeEventsDivider.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     />
   );
@@ -1835,14 +1919,14 @@ function CurrentEventsTimeline({
 
   return (
     <section
-      className="current-events-timeline"
+      className="current-events-timeline motion-reveal motion-transform-inline motion-stagger"
       aria-label="Upcoming screenings updated from the current date and time"
       style={{
         left: currentEventsTimeline.x * scale,
         top: currentEventsTimeline.y * scale,
         width: currentEventsTimeline.width,
         height: currentEventsTimeline.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       {events.map((event) => (
@@ -1872,17 +1956,17 @@ function CurrentEventsTimeline({
 function InstagramStorySection({ scale }: { scale: number }) {
   return (
     <section
-      className="instagram-story-section"
+      className="instagram-story-section motion-reveal motion-transform-inline"
       aria-label="Cafe La Mirajh Instagram story"
       style={{
         left: 0,
         top: instagramStorySection.top * scale,
         width: instagramStorySection.width,
         height: instagramStorySection.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
-      <div className="instagram-story-copy">
+      <div className="instagram-story-copy motion-stagger">
         <h2>Follow the Story</h2>
         <p>@cafe_la_mirajh_</p>
       </div>
@@ -1896,7 +1980,7 @@ function InstagramStorySection({ scale }: { scale: number }) {
         <span>Follow on Instagram</span>
         <i aria-hidden="true" />
       </a>
-      <div className="instagram-story-rail" aria-label="Latest Instagram photos">
+      <div className="instagram-story-rail motion-stagger" aria-label="Latest Instagram photos">
         {instagramStoryPhotos.map((src, index) => (
           <img
             key={src}
@@ -1915,14 +1999,14 @@ function InstagramStorySection({ scale }: { scale: number }) {
 function EventsHeroReplacement({ scale }: { scale: number }) {
   return (
     <section
-      className="events-hero-replacement"
+      className="events-hero-replacement motion-reveal motion-transform-inline"
       aria-label="Cinematic experiences and match screenings"
       style={{
         left: 0,
         top: eventsHeroReplacement.top * scale,
         width: eventsHeroReplacement.width,
         height: eventsHeroReplacement.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
       <img
@@ -1933,7 +2017,7 @@ function EventsHeroReplacement({ scale }: { scale: number }) {
         draggable={false}
       />
       <div className="events-hero-shade" aria-hidden="true" />
-      <div className="events-hero-copy" aria-hidden="true">
+      <div className="events-hero-copy motion-stagger" aria-hidden="true">
         <p>Cinematic Experiences</p>
         <h1>
           An Evening of <span>Cinema &amp; Sport</span>
@@ -2174,7 +2258,7 @@ function VisualOverlayLayer({
 }) {
   return (
     <img
-      className="visual-overlay visual-overlay-image"
+      className="visual-overlay visual-overlay-image motion-reveal"
       src={overlay.src}
       alt=""
       aria-hidden="true"
@@ -2263,17 +2347,17 @@ function VirtualTableBooking({ scale }: { scale: number }) {
 
   return (
     <section
-      className="booking-widget"
+      className="booking-widget motion-reveal motion-transform-inline"
       aria-label="Virtual table booking"
       style={{
         left: bookingWidget.x * scale,
         top: bookingWidget.y * scale,
         width: bookingWidget.width,
         height: bookingWidget.height,
-        transform: `scale(${scale})`,
+        transform: `translate3d(0, var(--motion-y, 0px), 0) scale(${scale})`,
       }}
     >
-      <div className="booking-heading">
+      <div className="booking-heading motion-stagger">
         <p className="booking-eyebrow">Reserve Your Spot</p>
         <h2 className="booking-title">
           Virtual <span>Table</span> Booking
@@ -2283,7 +2367,7 @@ function VirtualTableBooking({ scale }: { scale: number }) {
         </p>
       </div>
 
-      {!submitted && <div className="booking-stepper" aria-label="Booking progress">
+      {!submitted && <div className="booking-stepper motion-stagger" aria-label="Booking progress">
         {[1, 2, 3].map((item, index) => {
           const currentStep = item as BookingStep;
           return (
@@ -2309,7 +2393,7 @@ function VirtualTableBooking({ scale }: { scale: number }) {
         {step === 1 && (
           <>
             <h3 className="booking-stage-title">Choose Your Spot</h3>
-            <div className="booking-cards">
+            <div className="booking-cards motion-stagger">
               {bookingSpots.map((item) => {
                 const isSelected = selectedSpot === item.id;
                 return (
@@ -2441,7 +2525,7 @@ function HomeGalleryCarousel({ scale }: { scale: number }) {
   return (
     <>
       <section
-        className="home-gallery-carousel"
+        className="home-gallery-carousel motion-reveal"
         aria-label="Cafe photo carousel"
         style={
           {

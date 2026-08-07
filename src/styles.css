@@ -3,6 +3,9 @@
 :root {
   /* Desktop display width matching the original 1728px-wide Figma canvas. */
   --design-width: 1728px;
+  --hero-depth: 0;
+  --motion-y: 0px;
+  --scroll-progress: 0;
   color: #062c34;
   background: #f9edd1;
   font-family:
@@ -42,6 +45,27 @@ button {
   font: inherit;
 }
 
+button,
+a,
+select {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled) {
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    box-shadow 220ms ease,
+    color 220ms ease,
+    filter 220ms ease,
+    opacity 220ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+button:not(:disabled):active {
+  filter: brightness(0.96);
+}
+
 .container,
 main,
 .site-frame,
@@ -56,6 +80,84 @@ main,
   min-height: 100vh;
   overflow-x: clip;
   background: #002c34;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 120;
+  width: 100%;
+  height: 4px;
+  background:
+    linear-gradient(90deg, #dbb24c, #fff2d4 48%, #dbb24c),
+    #dbb24c;
+  box-shadow: 0 0 18px rgba(219, 178, 76, 0.45);
+  pointer-events: none;
+  transform: scaleX(var(--scroll-progress));
+  transform-origin: left center;
+}
+
+.motion-page-enter {
+  animation: page-rise-in 760ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-page-cta {
+  animation: page-cta-in 980ms 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.motion-reveal {
+  --motion-y: 48px;
+  --motion-order: 0;
+  clip-path: inset(0 0 8% 0);
+  filter: blur(10px);
+  opacity: 0;
+  transition:
+    clip-path 920ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 920ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 720ms ease,
+    transform 920ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: calc(var(--motion-order) * 70ms);
+  will-change: clip-path, filter, opacity, transform;
+}
+
+.motion-reveal:not(.motion-transform-inline) {
+  transform: translate3d(0, var(--motion-y), 0);
+}
+
+.motion-reveal.is-visible {
+  --motion-y: 0px;
+  clip-path: inset(0 0 0 0);
+  filter: blur(0);
+  opacity: 1;
+}
+
+.motion-reveal-child {
+  transition-delay: calc(var(--motion-order) * 78ms);
+}
+
+@keyframes page-rise-in {
+  from {
+    filter: saturate(0.94) brightness(0.92);
+    opacity: 0;
+  }
+
+  to {
+    filter: saturate(1) brightness(1);
+    opacity: 1;
+  }
+}
+
+@keyframes page-cta-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
 }
 
 .page-shell {
@@ -2407,12 +2509,10 @@ main,
 @keyframes hero-mood-fade {
   from {
     opacity: 0;
-    transform: scale(1.015);
   }
 
   to {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
@@ -3098,6 +3198,267 @@ main,
 .hotspot:focus-visible {
   outline: 3px solid rgba(219, 171, 68, 0.95);
   outline-offset: 2px;
+}
+
+.site-header-logo-button:hover {
+  filter: drop-shadow(0 8px 12px rgba(0, 44, 52, 0.16));
+  transform: translateY(-2px) scale(1.035);
+}
+
+.site-header-logo-button:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.site-header-reserve-button:hover {
+  box-shadow: 0 12px 28px rgba(0, 88, 115, 0.18);
+}
+
+.shared-footer-phone:hover {
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.about-us-1-page .about-us-1-navlinks button:hover {
+  color: #c9a84c;
+  transform: translateY(-2px);
+}
+
+.about-us-1-page .about-us-1-nav-reserve:hover,
+.about-us-1-page .about-us-1-hero-copy button:hover,
+.about-us-1-page .about-us-1-cta button:hover {
+  background: #c9a84c;
+  color: #1a1a18;
+  box-shadow: 0 18px 34px rgba(26, 26, 24, 0.16);
+  transform: translateY(-3px);
+}
+
+.about-us-1-page .about-us-1-welcome-copy > button:hover {
+  background: #1a1a18;
+  color: #f5efe0;
+  box-shadow: 0 16px 30px rgba(26, 26, 24, 0.14);
+  transform: translateY(-3px);
+}
+
+.about-us-1-footer-links button:hover {
+  color: #c9a84c;
+  transform: translateY(-2px);
+}
+
+.about-us-1-map:hover {
+  box-shadow: 0 24px 55px rgba(0, 0, 0, 0.26);
+  transform: translateY(-5px);
+}
+
+.about-us-1-map:hover > img {
+  transform: scale(1.035);
+}
+
+.about-us-1-map > img {
+  transition: transform 620ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-us-1-card:hover,
+.signature-drink-card:hover,
+.figma-menu-item:hover {
+  border-color: rgba(227, 178, 60, 0.48);
+  box-shadow:
+    0 20px 44px rgba(0, 0, 0, 0.16),
+    inset 0 1px 0 rgba(255, 242, 212, 0.08);
+  transform: translateY(-4px);
+}
+
+.figma-menu-item,
+.signature-drink-card,
+.about-us-1-card {
+  transition:
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-mood-photo,
+.events-hero-photo,
+.about-us-1-hero > img,
+.kiosk-menu-photo,
+.home-rooftop-escape-photo {
+  transform: translate3d(0, calc(var(--hero-depth) * -26px), 0) scale(1.02);
+  transition: transform 140ms linear;
+  will-change: transform;
+}
+
+.hero-mood-copy {
+  transform: translate3d(0, calc(var(--hero-depth) * -18px), 0);
+  transition: transform 140ms linear;
+  will-change: transform;
+}
+
+.hero-mood-toggle {
+  transform: translate3d(0, calc(var(--hero-depth) * 12px), 0);
+  transition:
+    box-shadow 220ms ease,
+    transform 140ms linear;
+}
+
+.hero-mood-toggle:hover {
+  box-shadow:
+    0 0 0 8px #002c34,
+    0 18px 36px rgba(0, 0, 0, 0.22);
+}
+
+.hero-mood-button {
+  transition:
+    background-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.hero-mood-button:hover {
+  background: rgba(255, 242, 212, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(219, 178, 76, 0.36);
+  transform: scale(1.1);
+}
+
+.hero-explore-cafe-button:hover {
+  box-shadow:
+    0 18px 34px rgba(0, 44, 52, 0.24),
+    0 0 0 1px rgba(255, 242, 212, 0.44);
+}
+
+.explore-cafe-zone:hover {
+  transform: translateY(-2px);
+}
+
+.gallery-carousel-control::after,
+.hotspot::after {
+  position: absolute;
+  inset: -5px;
+  border: 2px solid rgba(219, 171, 68, 0.88);
+  border-radius: inherit;
+  background:
+    linear-gradient(135deg, rgba(219, 171, 68, 0.14), rgba(255, 242, 212, 0.08));
+  box-shadow:
+    0 0 0 1px rgba(0, 88, 115, 0.16),
+    0 14px 34px rgba(0, 44, 52, 0.18);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.985);
+  transition:
+    opacity 180ms ease,
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.gallery-carousel-control:hover::after,
+.hotspot:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.gallery-carousel-control:hover {
+  transform: translateY(-2px);
+}
+
+.instagram-story-photo {
+  transition:
+    box-shadow 260ms ease,
+    transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.instagram-story-photo:hover {
+  box-shadow: 0 28px 62px rgba(0, 0, 0, 0.32);
+  transform: translateY(-6px) rotate(0.35deg);
+}
+
+.current-event-row:hover {
+  background: rgba(219, 178, 76, 0.08);
+}
+
+.current-event-row:hover .current-event-title {
+  color: #005873;
+}
+
+.booking-step:hover,
+.booking-primary:hover,
+.booking-back:hover,
+.booking-again:hover {
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+  transform: translateY(-3px);
+}
+
+.booking-step:hover {
+  background: #dbb24c;
+  color: #00313a;
+}
+
+.booking-primary:hover,
+.booking-again:hover {
+  background: #fff2d4;
+  color: #002c34;
+}
+
+.booking-back:hover {
+  border-color: #fff2d4;
+  background: rgba(255, 242, 212, 0.1);
+}
+
+.booking-card:hover {
+  border-color: #dbb24c;
+  box-shadow:
+    0 0 0 1px rgba(219, 178, 76, 0.35),
+    0 28px 58px rgba(0, 0, 0, 0.24);
+}
+
+.booking-select-field select:hover {
+  border-color: rgba(219, 178, 76, 0.42);
+  background: #004b5d;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  button:not(:disabled),
+  a,
+  select,
+  .motion-reveal,
+  .motion-reveal-child,
+  .home-gallery-carousel-nudge,
+  .home-gallery-carousel-track,
+  .instagram-story-photo {
+    transition: none !important;
+  }
+
+  .motion-page-enter,
+  .motion-page-cta,
+  .hero-mood-photo {
+    animation: none !important;
+  }
+
+  .motion-reveal {
+    --motion-y: 0px;
+    clip-path: none;
+    filter: none;
+    opacity: 1;
+  }
+
+  .motion-reveal:not(.motion-transform-inline) {
+    transform: none;
+  }
+
+  .hero-mood-photo,
+  .events-hero-photo,
+  .about-us-1-hero > img,
+  .kiosk-menu-photo,
+  .home-rooftop-escape-photo,
+  .hero-mood-copy,
+  .hero-mood-toggle {
+    transform: none !important;
+  }
+
+  .scroll-progress {
+    box-shadow: none;
+  }
 }
 
 .sr-only {
